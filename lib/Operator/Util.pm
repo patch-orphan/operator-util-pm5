@@ -5,7 +5,7 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( reducewith sequentialargs reverseargs );
+our @EXPORT_OK   = qw( reducewith zipwith sequentialargs reverseargs );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
@@ -89,6 +89,19 @@ sub reducewith {
     return $result;
 }
 
+sub zipwith {
+    my ($op, $lhs, $rhs) = @_;
+    my ($a, $b, @results);
+
+    while (@$lhs && @$rhs) {
+        $a = shift @$lhs;
+        $b = shift @$rhs;
+        push @results, $ops{$op}->($a, $b);
+    }
+
+    return @results;
+}
+
 sub sequentialargs {
     my ($op, $a, $b) = @_;
 
@@ -128,6 +141,10 @@ The following functions are provided but are not exported by default.
 =over 4
 
 =item reducewith($operator, @list)
+
+...
+
+=item zipwith($operator, $array_ref1, $array_ref2)
 
 ...
 
