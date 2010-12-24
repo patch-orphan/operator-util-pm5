@@ -5,7 +5,7 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( );
+our @EXPORT_OK   = qw( reducewith );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
@@ -73,6 +73,22 @@ if ($] >= 5.010) {
     }
 }
 
+sub reducewith {
+    my ($op, @list) = @_;
+
+    return unless exists $ops{$op};
+    return if @list < 2;
+
+    my $result = shift @list;
+
+    while (@list) {
+        my $next = shift @list;
+        $result = $ops{$op}->($result, $next);
+    }
+
+    return $result;
+}
+
 1;
 
 __END__
@@ -99,7 +115,7 @@ The following functions are provided but are not exported by default.
 
 =over 4
 
-=item XXX
+=item reducewith($operator, @list)
 
 ...
 
