@@ -8,6 +8,71 @@ our $VERSION     = '0.00_1';
 our @EXPORT_OK   = qw( );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
+my %ops = (
+    'prefix:++' => sub { ++$_[0] },
+    'prefix:--' => sub { --$_[0] },
+    'prefix:!'  => sub {  !$_[0] },
+    'prefix:~'  => sub {  ~$_[0] },
+    'prefix:\\' => sub {  \$_[0] },
+    'prefix:+'  => sub {  +$_[0] },
+    'prefix:-'  => sub {  -$_[0] },
+
+    'postfix:++' => sub { $_[0]++ },
+    'postfix:--' => sub { $_[0]-- },
+
+    'infix:->'  => sub { my $m = $_[1]; $_[0]->$m },
+    'infix:**'  => sub { $_[0] **  $_[1] },
+    'infix:=~'  => sub { $_[0] =~  $_[1] },
+    'infix:!~'  => sub { $_[0] !~  $_[1] },
+    'infix:*'   => sub { $_[0] *   $_[1] },
+    'infix:/'   => sub { $_[0] /   $_[1] },
+    'infix:%'   => sub { $_[0] %   $_[1] },
+    'infix:x'   => sub { $_[0] x   $_[1] },
+    'infix:+'   => sub { $_[0] +   $_[1] },
+    'infix:-'   => sub { $_[0] -   $_[1] },
+    'infix:.'   => sub { $_[0] .   $_[1] },
+    'infix:<<'  => sub { $_[0] <<  $_[1] },
+    'infix:>>'  => sub { $_[0] >>  $_[1] },
+    'infix:<'   => sub { $_[0] <   $_[1] },
+    'infix:>'   => sub { $_[0] >   $_[1] },
+    'infix:<='  => sub { $_[0] <=  $_[1] },
+    'infix:>='  => sub { $_[0] >=  $_[1] },
+    'infix:lt'  => sub { $_[0] lt  $_[1] },
+    'infix:gt'  => sub { $_[0] gt  $_[1] },
+    'infix:le'  => sub { $_[0] le  $_[1] },
+    'infix:ge'  => sub { $_[0] ge  $_[1] },
+    'infix:=='  => sub { $_[0] ==  $_[1] },
+    'infix:!='  => sub { $_[0] !=  $_[1] },
+    'infix:<=>' => sub { $_[0] <=> $_[1] },
+    'infix:eq'  => sub { $_[0] eq  $_[1] },
+    'infix:ne'  => sub { $_[0] ne  $_[1] },
+    'infix:cmp' => sub { $_[0] cmp $_[1] },
+    'infix:&'   => sub { $_[0] &   $_[1] },
+    'infix:|'   => sub { $_[0] |   $_[1] },
+    'infix:^'   => sub { $_[0] ^   $_[1] },
+    'infix:&&'  => sub { $_[0] &&  $_[1] },
+    'infix:||'  => sub { $_[0] ||  $_[1] },
+    'infix:..'  => sub { $_[0] ..  $_[1] },
+    'infix:...' => sub { $_[0] ... $_[1] },
+    'infix:,'   => sub { $_[0] ,   $_[1] },
+    'infix:=>'  => sub { $_[0] =>  $_[1] },
+    'infix:and' => sub { $_[0] and $_[1] },
+    'infix:or'  => sub { $_[0] or  $_[1] },
+    'infix:xor' => sub { $_[0] xor $_[1] },
+);
+
+for my $op (keys %ops) {
+    next if $op !~ m{^ infix: (.+) $}x;
+    $ops{$1} = $ops{$op};
+}
+
+# Perl 5.10 operators
+if ($] >= 5.010) {
+    for my $op (qw< ~~ // >) {
+        $ops{$op} = eval "sub { \$_[0] $op \$_[1] }";
+    }
+}
+
 1;
 
 __END__
