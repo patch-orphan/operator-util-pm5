@@ -1,0 +1,17 @@
+Operator::Util 0.00_1
+=====================
+
+A selection of subroutines based on metaoperators in Perl 6
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+    parent
+
+COPYRIGHT AND LICENSE
+
+Copyright 2010 Nick Patch
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
