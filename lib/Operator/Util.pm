@@ -5,7 +5,7 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( reducewith zipwith sequentialargs reverseargs );
+our @EXPORT_OK   = qw( reducewith zipwith applyop reverseop );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
@@ -83,7 +83,7 @@ sub reducewith {
 
     while (@list) {
         my $next = shift @list;
-        $result = $ops{$op}->($result, $next);
+        $result = applyop($op, $result, $next);
     }
 
     return $result;
@@ -96,19 +96,19 @@ sub zipwith {
     while (@$lhs && @$rhs) {
         $a = shift @$lhs;
         $b = shift @$rhs;
-        push @results, $ops{$op}->($a, $b);
+        push @results, applyop($op, $a, $b);
     }
 
     return @results;
 }
 
-sub sequentialargs {
+sub applyop {
     my ($op, $a, $b) = @_;
 
     return $ops{$op}->($a, $b);
 }
 
-sub reverseargs {
+sub reverseop {
     my ($op, $a, $b) = @_;
 
     return $ops{$op}->($b, $a);
@@ -148,11 +148,11 @@ The following functions are provided but are not exported by default.
 
 ...
 
-=item sequentialargs($operator, $operand1, $operand2)
+=item applyop($operator, $operand1, $operand2)
 
 ...
 
-=item reverseargs($operator, $operand1, $operand2)
+=item reverseop($operator, $operand1, $operand2)
 
 ...
 
