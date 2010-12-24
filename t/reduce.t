@@ -1,73 +1,61 @@
-use v6;
-use Test;
+use Test::More tests => 92;
 
-plan 92;
+use ok 'Operator::Util', qw( reducewith );
 
-=begin pod
+# This test tests the reducewith subroutine.
 
-=head1 DESCRIPTION
-
-This test tests the C<[...]> reduce metaoperator.
-
-Reference:
-L<"http://groups.google.de/group/perl.perl6.language/msg/bd9eb275d5da2eda">
-
-=end pod
-
-# L<S03/"Reduction operators">
-
-# [...] reduce metaoperator
 {
-  my @array = <5 -3 7 0 1 -9>;
-  my $sum   = 5 + -3 + 7 + 0 + 1 + -9; # laziness :)
+    my @array = qw< 5 -3 7 0 1 -9 >;
+    my $sum   = 5 + -3 + 7 + 0 + 1 + -9; # laziness :)
 
-  is(([+] @array),      $sum, "[+] works");
-  is(([*]  1,2,3),    (1*2*3), "[*] works");
-  is(([-]  1,2,3),    (1-2-3), "[-] works");
-  is(([/]  12,4,3),  (12/4/3), "[/] works");
-  is(([div]  12,4,3),  (12 div 4 div 3), "[div] works");
-  is(([**] 2,2,3),  (2**2**3), "[**] works");
-  is(([%]  13,7,4), (13%7%4),  "[%] works");
-  is(([mod]  13,7,4), (13 mod 7 mod 4),  "[mod] works");
+    is reducewith('+',  @array), $sum,             '+ works';
+    is reducewith('*'   1,2,3 ), (1*2*3),          '* works';
+    is reducewith('-'   1,2,3 ), (1-2-3),          '- works';
+    is reducewith('/'   12,4,3), (12/4/3),         '/ works';
+    is reducewith('div' 12,4,3), (12 div 4 div 3), 'div works';
+    is reducewith('**'  2,2,3 ), (2**2**3),        '** works';
+    is reducewith('%'   13,7,4), (13%7%4),         '% works';
+    is reducewith('mod' 13,7,4), (13 mod 7 mod 4), 'mod works';
 
-  is((~ [\+] @array), "5 2 9 9 10 1", "[\\+] works");
-  is((~ [\-] 1, 2, 3), "1 -1 -4",      "[\\-] works");
+    is_deeply(
+        [reducewith '+', @array, {triangle=>1}],
+        [5,2,9,9,10,1],
+        'triangle + works'
+    );
+    is_deeply(
+        [reducewith '-', 1,2,3, {triangle=>1}],
+        [1,-1,-4],
+        'triangle - works'
+    );
 }
 
 {
-  is ([~] <a b c d>), "abcd", "[~] works";
-  is (~ [\~] <a b c d>), "a ab abc abcd", "[\\~] works";
+    is reducewith('~', qw<a b c d>), 'abcd', '~ works';
+    is_deeply(
+        [reducewith '~', qw<a b c d>, {triangle=>1}],
+        [qw<a ab abc abcd>],
+        'triangle ~ works'
+    );
 }
 
 {
-    ok  ([<]  1, 2, 3, 4), "[<] works (1)";
-    nok ([<]  1, 3, 2, 4), "[<] works (2)";
-    ok  ([>]  4, 3, 2, 1), "[>] works (1)";
-    nok ([>]  4, 2, 3, 1), "[>] works (2)";
-    ok  ([==] 4, 4, 4),    "[==] works (1)";
-    nok ([==] 4, 5, 4),    "[==] works (2)";
-    ok  ([!=] 4, 5, 6),    "[!=] works (1)";
-    nok ([!=] 4, 4, 4),    "[!=] works (2)";
+    ok  reducewith('<',  1,2,3,4, {chaining=>1}), '< works (1)';
+    ok !reducewith('<',  1,3,2,4, {chaining=>1}), '< works (2)';
+    ok  reducewith('>',  4,3,2,1, {chaining=>1}), '> works (1)';
+    ok !reducewith('>',  4,2,3,1, {chaining=>1}), '> works (2)';
+    ok  reducewith('==', 4,4,4,   {chaining=>1}), '== works (1)';
+    ok !reducewith('==', 4,5,4,   {chaining=>1}), '== works (2)';
+    ok  reducewith('!=', 4,5,6,   {chaining=>1}), '!= works (1)';
+    ok !reducewith('!=', 4,4,4,   {chaining=>1}), '!= works (2)';
 }
 
 {
-    ok (! [eq] <a a b a>),    '[eq] basic sanity (positive)';
-    ok (  [eq] <a a a a>),    '[eq] basic sanity (negative)';
-    ok (  [ne] <a b c a>),    '[ne] basic sanity (positive)';
-    ok (! [ne] <a a b c>),    '[ne] basic sanity (negative)';
-    ok (  [lt] <a b c e>),    '[lt] basic sanity (positive)';
-    ok (! [lt] <a a c e>),    '[lt] basic sanity (negative)';
-}
-
-#?rakudo skip "=:= NYI"
-{
-    my ($x, $y);
-    ok (    [=:=]  $x, $x, $x), '[=:=] basic sanity 1';
-    ok (not [=:=]  $x, $y, $x), '[=:=] basic sanity 2';
-    ok (    [!=:=] $x, $y, $x), '[!=:=] basic sanity (positive)';
-    ok (not [!=:=] $y, $y, $x), '[!=:=] basic sanity (negative)';
-    $y := $x;
-    ok (    [=:=]  $y, $x, $y), '[=:=] after binding';
+    ok !reducewith('eq', <a a b a>, {chaining=>1}), 'eq basic sanity (positive)';
+    ok  reducewith('eq', <a a a a>, {chaining=>1}), 'eq basic sanity (negative)';
+    ok  reducewith('ne', <a b c a>, {chaining=>1}), 'ne basic sanity (positive)';
+    ok !reducewith('ne', <a a b c>, {chaining=>1}), 'ne basic sanity (negative)';
+    ok  reducewith('lt', <a b c e>, {chaining=>1}), 'lt basic sanity (positive)';
+    ok !reducewith('lt', <a a c e>, {chaining=>1}), 'lt basic sanity (negative)';
 }
 
 {
