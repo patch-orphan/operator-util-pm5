@@ -5,7 +5,7 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( reducewith zipwith crosswith applyop reverseop );
+our @EXPORT_OK   = qw( reducewith zipwith crosswith hyper applyop reverseop );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
@@ -115,6 +115,37 @@ sub crosswith {
     return @results;
 }
 
+sub hyper {
+    my ($op, $lhs, $rhs, %args) = @_;
+    my $dwim_left  = $args{dwim_left};
+    my $dwim_right = $args{dwim_right};
+    my ($length, @results);
+
+    if (!$dwim_left && !$dwim_right) {
+        if (@$lhs != @$rhs) {
+            die "Sorry, arrayrefs passed to non-dwimmy hyper() are not of same length:\n"
+                . "    left:  " . @$lhs . " elements\n"
+                . "    right: " . @$rhs . " elements\n";
+        }
+        $length = @$lhs;
+    }
+    elsif (!$dwim_left) {
+        $length = @$lhs;
+    }
+    elsif (!$dwim_right) {
+        $length = @$rhs;
+    }
+    else {
+        $length = @$lhs > @$rhs ? @$lhs : @$rhs;
+    }
+
+    for my $i (0 .. $length - 1) {
+        push @results, applyop($op, $lhs->[$i], $rhs->[$i]);
+    }
+
+    return @results;
+}
+
 sub applyop {
     my ($op, $a, $b) = @_;
 
@@ -162,6 +193,10 @@ The following functions are provided but are not exported by default.
 ...
 
 =item crosswith($operator, $arrayref1, $arrayref2)
+
+...
+
+=item hyper($operator, $arrayref3, $arrayref2 [, dwim_left => 1, dwim_right => 1 ])
 
 ...
 
