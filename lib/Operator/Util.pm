@@ -5,7 +5,7 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( reducewith zipwith applyop reverseop );
+our @EXPORT_OK   = qw( reducewith zipwith crosswith applyop reverseop );
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
@@ -102,6 +102,19 @@ sub zipwith {
     return @results;
 }
 
+sub crosswith {
+    my ($op, $lhs, $rhs) = @_;
+    my ($a, $b, @results);
+
+    for my $a (@$lhs) {
+        for my $b (@$rhs) {
+            push @results, applyop($op, $a, $b);
+        }
+    }
+
+    return @results;
+}
+
 sub applyop {
     my ($op, $a, $b) = @_;
 
@@ -144,7 +157,11 @@ The following functions are provided but are not exported by default.
 
 ...
 
-=item zipwith($operator, $array_ref1, $array_ref2)
+=item zipwith($operator, $arrayref1, $arrayref2)
+
+...
+
+=item crosswith($operator, $arrayref1, $arrayref2)
 
 ...
 
