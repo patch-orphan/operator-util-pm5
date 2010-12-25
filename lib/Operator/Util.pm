@@ -5,8 +5,19 @@ use warnings;
 use parent 'Exporter';
 
 our $VERSION     = '0.00_1';
-our @EXPORT_OK   = qw( reducewith zipwith crosswith hyper applyop reverseop );
+our @EXPORT_OK   = qw(
+    reduce  reducewith
+    zip     zipwith
+    cross   crosswith
+    hyper   hyperwith
+    applyop reverseop
+);
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
+
+*reducewith = \&reduce;
+*zipwith    = \&zip;
+*crosswith  = \&cross;
+*hyperwith  = \&hyper;
 
 my %ops = (
     'prefix:++' => sub { ++$_[0] },
@@ -73,7 +84,7 @@ if ($] >= 5.010) {
     }
 }
 
-sub reducewith {
+sub reduce {
     my ($op, @list) = @_;
 
     return unless exists $ops{$op};
@@ -89,7 +100,7 @@ sub reducewith {
     return $result;
 }
 
-sub zipwith {
+sub zip {
     my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
 
@@ -102,7 +113,7 @@ sub zipwith {
     return @results;
 }
 
-sub crosswith {
+sub cross {
     my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
 
@@ -184,15 +195,15 @@ The following functions are provided but are not exported by default.
 
 =over 4
 
-=item reducewith($operator, @list)
+=item reduce($operator, @list)
 
 ...
 
-=item zipwith($operator, $arrayref1, $arrayref2)
+=item zip($operator, $arrayref1, $arrayref2)
 
 ...
 
-=item crosswith($operator, $arrayref1, $arrayref2)
+=item cross($operator, $arrayref1, $arrayref2)
 
 ...
 
