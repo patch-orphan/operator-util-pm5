@@ -72,22 +72,17 @@ my %ops = (
     'infix:xor' => sub { $_[0] xor $_[1] },
 );
 
-for my $op (keys %ops) {
-    next if $op !~ m{^ infix: (.+) $}x;
-    $ops{$1} = $ops{$op};
-}
-
 # Perl 5.10 operators
 if ($] >= 5.010) {
-    for my $op (qw< ~~ // >) {
-        $ops{$op} = eval "sub { \$_[0] $op \$_[1] }";
+    for my $op ('~~', '//') {
+        $ops{"infix:$op"} = eval "sub { \$_[0] $op \$_[1] }";
     }
 }
 
 sub reduce {
     my ($op, @list) = @_;
 
-    return unless exists $ops{$op};
+    return unless exists $ops{"infix:$op"};
     return if @list < 2;
 
     my $result = shift @list;
@@ -159,14 +154,22 @@ sub hyper {
 
 sub applyop {
     my ($op, $a, $b) = @_;
+    my ($type) = $op =~ m{^ (\w+) : }x;
 
-    return $ops{$op}->($a, $b);
+    if (!$type) {
+        $type = "infix";
+        $op   = "infix:$op";
+    }
+
+    return unless exists $ops{$op};
+    return $ops{$op}->($a, $b) if $type eq 'infix';
+    return $ops{$op}->($a);
 }
 
 sub reverseop {
     my ($op, $a, $b) = @_;
 
-    return $ops{$op}->($b, $a);
+    return applyop($op, $b, $a);
 }
 
 1;
