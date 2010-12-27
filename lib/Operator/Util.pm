@@ -85,18 +85,18 @@ if ($] >= 5.010) {
 }
 
 sub reduce {
-    my ($op, @list) = @_;
+    my ($op, $list) = @_;
     my $type;
 
-    return unless @list;
-    return $list[0] if @list == 1;
+    return if ref $list ne 'ARRAY';
+    return unless @$list;
+    return $list->[0] if @$list == 1;
 
     ($op, $type) = _get_op_type($op);
 
     return unless $op;
     return if $type ne 'infix';
-
-    return List::Util::reduce { applyop($op, $a, $b) } @list;
+    return List::Util::reduce { applyop($op, $a, $b) } @$list;
 }
 
 sub zip {
@@ -272,6 +272,8 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
 =head1 TODO
 
 =over
+
+=item * Add C<warn>ings on errors instead of simply C<return>ing
 
 =item * Add named unary operators such as C<uc> and C<lc>
 
