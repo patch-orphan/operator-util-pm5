@@ -206,7 +206,7 @@ This is an early release of Operator::Util.  The interface and functionality may
 
 ...
 
-The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  When an unary operator is expected, the prefix operator is used by default since the postfix operators would be no-ops.
+The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  Unary opstrings must be stated in the full form with C<prefix:> or C<postfix:> prepended.  Note however that the provided functions do not modify the operand arguments, therefore rendering C<'postfix:++'> and C<'postfix:--'> as no-ops.
 
 The following functions are provided but are not exported by default.
 
@@ -251,7 +251,7 @@ C<reverseop> provides the same functionality as C<applyop> except that OPERAND1 
 
 =back
 
-The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to return a flat list.  When set to C<0>, it causes the return value from each operator to be stored in an array ref, resulting in a "list of list" being returned from the function. 
+The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to return a flat list.  When set to C<0>, it causes the return value from each operator to be stored in an array ref, resulting in a "list of lists" being returned from the function. 
 
     zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
     zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
