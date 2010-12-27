@@ -3,6 +3,7 @@ use 5.006;
 use strict;
 use warnings;
 use parent 'Exporter';
+use List::Util;
 
 our $VERSION     = '0.00_1';
 our @EXPORT_OK   = qw(
@@ -85,18 +86,17 @@ if ($] >= 5.010) {
 
 sub reduce {
     my ($op, @list) = @_;
+    my $type;
 
-    return unless exists $ops{"infix:$op"};
-    return if @list < 2;
+    return unless @list;
+    return $list[0] if @list == 1;
 
-    my $result = shift @list;
+    ($op, $type) = _get_op_type($op);
 
-    while (@list) {
-        my $next = shift @list;
-        $result = applyop($op, $result, $next);
-    }
+    return unless $op;
+    return if $type ne 'infix';
 
-    return $result;
+    return List::Util::reduce { applyop($op, $a, $b) } @list;
 }
 
 sub zip {
@@ -158,14 +158,11 @@ sub hyper {
 
 sub applyop {
     my ($op, $a, $b) = @_;
-    my ($type) = $op =~ m{^ (\w+) : }x;
+    my $type;
 
-    if (!$type) {
-        $type = "infix";
-        $op   = "infix:$op";
-    }
+    ($op, $type) = _get_op_type($op);
 
-    return unless exists $ops{$op};
+    return unless $op;
     return $ops{$op}->($a, $b) if $type eq 'infix';
     return $ops{$op}->($a);
 }
@@ -175,6 +172,19 @@ sub reverseop {
 
     return applyop($op, $a) if $op =~ m{^ (?: pre | post ) fix : }x;
     return applyop($op, $b, $a);
+}
+
+sub _get_op_type {
+    my ($op) = @_;
+    my ($type) = $op =~ m{^ (\w+) : }x;
+
+    if (!$type) {
+        $type = "infix";
+        $op   = "infix:$op";
+    }
+
+    return unless exists $ops{$op};
+    return $op, $type;
 }
 
 1;
