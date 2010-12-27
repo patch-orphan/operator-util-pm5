@@ -73,8 +73,12 @@ my %ops = (
     # unary postfix (no-ops!)
     'postfix:++' => sub { $_[0]++ },
     'postfix:--' => sub { $_[0]-- },
-
 );
+
+my %rightops = ('infix:**' => 1);
+my %chainops = map { ( "infix:$_" => 1 ) } qw{
+    < > <= >= lt gt le ge == != <=> eq ne cmp ~~
+};
 
 # Perl 5.10 operators
 if ($] >= 5.010) {
@@ -85,23 +89,35 @@ if ($] >= 5.010) {
 
 sub reduce {
     my ($op, $list, %args) = @_;
-    my $type;
+    my ($type, $trait);
 
     return if ref $list ne 'ARRAY';
-    return unless @$list;
-    return $list->[0] if @$list == 1;
 
-    ($op, $type) = _get_op_type($op);
+    my @list = @$list;
+
+    return unless @list;
+    return $list[0] if @list == 1;
+
+    ($op, $type, $trait) = _get_op_info($op);
 
     return unless $op;
     return if $type ne 'infix';
 
-    my $result   = shift @$list;
+    if ($trait eq 'right') {
+        @list = reverse @list;
+    }
+
+    my $result   = shift @list;
     my @triangle = $result;
 
-    while (@$list) {
-        my $next = shift @$list;
-        $result = applyop($op, $result, $next);
+    my $apply = sub {
+        my ($a, $b) = @_;
+        return applyop( $op, $trait eq 'right' ? ($b, $a) : ($a, $b) );
+    };
+
+    while (@list) {
+        my $next = shift @list;
+        $result = $apply->($result, $next);
         push @triangle, $result if $args{triangle};
     }
 
@@ -170,7 +186,7 @@ sub applyop {
     my ($op, $a, $b) = @_;
     my $type;
 
-    ($op, $type) = _get_op_type($op);
+    ($op, $type) = _get_op_info($op);
 
     return unless $op;
     return $ops{$op}->($a, $b) if $type eq 'infix';
@@ -184,7 +200,7 @@ sub reverseop {
     return applyop($op, $b, $a);
 }
 
-sub _get_op_type {
+sub _get_op_info {
     my ($op) = @_;
     my ($type) = $op =~ m{^ (\w+) : }x;
 
@@ -193,8 +209,12 @@ sub _get_op_type {
         $op   = "infix:$op";
     }
 
+    my $trait = $chainops{$op} ? 'chain' :
+                $rightops{$op} ? 'right' :
+                                 ''      ;
+
     return unless exists $ops{$op};
-    return $op, $type;
+    return $op, $type, $trait;
 }
 
 1;
@@ -288,6 +308,8 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
 =item * Add named unary operators such as C<uc> and C<lc>
 
 =item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper> instead of just two
+
+=item * Support meta-operator literals such as C<Z> and C<X>
 
 =item * Should the first argument optionally be a subroutine ref instead of an operator string?
 
