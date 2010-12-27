@@ -1,7 +1,7 @@
 Operator::Util 0.00_1
 =====================
 
-A selection of subroutines based on metaoperators in Perl 6
+A selection of higher-order functions that take operators as arguments
 
 DEPENDENCIES
 
