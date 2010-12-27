@@ -85,16 +85,20 @@ if ($] >= 5.010) {
 
 sub reduce {
     my ($op, $list, %args) = @_;
-    my $type;
+    my ($type, $meta);
 
     return if ref $list ne 'ARRAY';
     return unless @$list;
     return $list->[0] if @$list == 1;
 
-    ($op, $type) = _get_op_type($op);
+    ($op, $type, $meta) = _get_op_type($op);
 
     return unless $op;
     return if $type ne 'infix';
+
+    if ($meta && $meta eq 'triangle') {
+        $args{triangle} = 1;
+    }
 
     my $result   = shift @$list;
     my @triangle = $result;
@@ -193,8 +197,20 @@ sub _get_op_type {
         $op   = "infix:$op";
     }
 
+    my $meta;
+    my %metas = (
+        Z    => 'zip',
+        X    => 'cross',
+        R    => 'reverse',
+        '\\' => 'triangle',
+    );
+
+    if ($op =~ s{ (?<= : ) ( [ZXR\\] ) (?= .+ $) }{}x) {
+        $meta = $metas{$1};
+    }
+
     return unless exists $ops{$op};
-    return $op, $type;
+    return $op, $type, $meta;
 }
 
 1;
