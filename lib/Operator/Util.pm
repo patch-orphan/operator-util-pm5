@@ -173,6 +173,7 @@ sub applyop {
 sub reverseop {
     my ($op, $a, $b) = @_;
 
+    return applyop($op, $a) if $op =~ m{^ (?: pre | post ) fix : }x;
     return applyop($op, $b, $a);
 }
 
@@ -248,6 +249,8 @@ If three arguments are provided to C<applyop>, apply the binary operator OPSTRIN
 C<reverseop> provides the same functionality as C<applyop> except that OPERAND1 and OPERAND2 are reversed.
 
     reverseop '.', 'foo', 'bar'  # barfoo
+
+If an unary opstring is used, C<reverseop> has the same functionality as C<applyop>.
 
 =back
 
