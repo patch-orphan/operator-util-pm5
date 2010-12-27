@@ -8,7 +8,6 @@ DEPENDENCIES
 This module requires these other modules and libraries:
 
     parent
-    List::Util
 
 COPYRIGHT AND LICENSE
 

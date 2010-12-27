@@ -3,7 +3,6 @@ use 5.006;
 use strict;
 use warnings;
 use parent 'Exporter';
-use List::Util;
 
 our $VERSION     = '0.00_1';
 our @EXPORT_OK   = qw(
@@ -85,7 +84,7 @@ if ($] >= 5.010) {
 }
 
 sub reduce {
-    my ($op, $list) = @_;
+    my ($op, $list, %args) = @_;
     my $type;
 
     return if ref $list ne 'ARRAY';
@@ -96,7 +95,18 @@ sub reduce {
 
     return unless $op;
     return if $type ne 'infix';
-    return List::Util::reduce { applyop($op, $a, $b) } @$list;
+
+    my $result   = shift @$list;
+    my @triangle = $result;
+
+    while (@$list) {
+        my $next = shift @$list;
+        $result = applyop($op, $result, $next);
+        push @triangle, $result if $args{triangle};
+    }
+
+    return @triangle if $args{triangle};
+    return $result;
 }
 
 sub zip {
