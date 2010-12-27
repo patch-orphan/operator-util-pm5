@@ -202,15 +202,13 @@ This is an early release of Operator::Util.  The interface and functionality may
 
 ...
 
-The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string '+' for the addition operator or the string '.' for the concatenation operator.
+The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  When an unary operator is expected, the prefix operator is used by default since the postfix operators would be no-ops.
 
 The following functions are provided but are not exported by default.
 
 =over 4
 
-=item reduce OPSTRING, LIST
-
-=item reduce OPSTRING, ARRAYREF
+=item reduce OPSTRING, ARRAYREF [, triangle => 1 ]
 
 C<reducewith> is an alias for C<reduce>.  It may be desirable to use C<reducewith> to avoid naming conflicts or confusion with L<List::Util/reduce>.
 
@@ -227,6 +225,8 @@ C<zipwith> is an alias for C<reduce>.
 C<crosswith> is an alias for C<reduce>.
 
 =item hyper OPSTRING, ARRAYREF1, ARRAYREF2 [, dwim_left => 1, dwim_right => 1 ]
+
+=item hyper OPSTRING, ARRAYREF
 
 C<hyperwith> is an alias for C<reduce>.
 
@@ -247,11 +247,20 @@ C<reverseop> provides the same functionality as C<applyop> except that OPERAND1 
 
 =back
 
+The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to return a flat list.  When set to C<0>, it causes the return value from each operator to be stored in an array ref, resulting in a "list of list" being returned from the function. 
+
+    zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
+    zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
+
 =head1 TODO
 
 =over
 
+=item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper> instead of just two
+
 =item * Should the first argument optionally be a subroutine ref instead of an operator string?
+
+=item * Should the C<flat =E<gt> 0> option be changed to C<lol =E<gt> 1>?
 
 =item * Convert tests to L<TestML>
 
