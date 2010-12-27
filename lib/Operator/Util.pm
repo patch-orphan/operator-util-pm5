@@ -20,17 +20,7 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 *hyperwith  = \&hyper;
 
 my %ops = (
-    'prefix:++' => sub { ++$_[0] },
-    'prefix:--' => sub { --$_[0] },
-    'prefix:!'  => sub {  !$_[0] },
-    'prefix:~'  => sub {  ~$_[0] },
-    'prefix:\\' => sub {  \$_[0] },
-    'prefix:+'  => sub {  +$_[0] },
-    'prefix:-'  => sub {  -$_[0] },
-
-    'postfix:++' => sub { $_[0]++ },
-    'postfix:--' => sub { $_[0]-- },
-
+    # binary infix
     'infix:->'  => sub { my $m = $_[1]; $_[0]->$m },
     'infix:**'  => sub { $_[0] **  $_[1] },
     'infix:=~'  => sub { $_[0] =~  $_[1] },
@@ -70,6 +60,20 @@ my %ops = (
     'infix:and' => sub { $_[0] and $_[1] },
     'infix:or'  => sub { $_[0] or  $_[1] },
     'infix:xor' => sub { $_[0] xor $_[1] },
+
+    # unary prefix
+    'prefix:++' => sub { ++$_[0] },
+    'prefix:--' => sub { --$_[0] },
+    'prefix:!'  => sub {  !$_[0] },
+    'prefix:~'  => sub {  ~$_[0] },
+    'prefix:\\' => sub {  \$_[0] },
+    'prefix:+'  => sub {  +$_[0] },
+    'prefix:-'  => sub {  -$_[0] },
+
+    # unary postfix (no-ops!)
+    'postfix:++' => sub { $_[0]++ },
+    'postfix:--' => sub { $_[0]-- },
+
 );
 
 # Perl 5.10 operators
@@ -256,6 +260,8 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
 
 =over
 
+=item * Add named unary operators such as C<uc> and C<lc>
+
 =item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper> instead of just two
 
 =item * Should the first argument optionally be a subroutine ref instead of an operator string?
@@ -275,7 +281,7 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
     pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
     zip '+', \@array1, \@array2             # Operator::Util
 
-=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is simular to C<zip> when using the default operator C<','> except that the arguments are arrays instead of array refs
+=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is simular to C<zip> when using the default operator C<','> except that the arguments are arrays instead of array refs:
 
     mesh @array1, @array2   # List::MoreUtils
     zip \@array1, \@array2  # Operator::Util
@@ -293,6 +299,8 @@ Nick Patch <patch@cpan.org>
 =head1 ACKNOWLEDGEMENTS
 
 =over
+
+=item * This module is based on the Perl 6 specification, as described in the Synopsis and implemented in Rakudo
 
 =item * Much of the documentation is based on Synopsis 3: Perl 6 Operators (L<http://perlcabal.org/syn/S03.html>)
 
