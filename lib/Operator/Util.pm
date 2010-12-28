@@ -108,7 +108,8 @@ sub reduce {
     }
 
     my $result   = shift @list;
-    my @triangle = $result;
+    my $bool     = 1;
+    my @triangle = $trait eq 'chain' ? $bool : $result;
 
     my $apply = sub {
         my ($a, $b) = @_;
@@ -117,11 +118,20 @@ sub reduce {
 
     while (@list) {
         my $next = shift @list;
-        $result = $apply->($result, $next);
-        push @triangle, $result if $args{triangle};
+
+        if ($trait eq 'chain') {
+            $bool = $bool && $apply->($result, $next);
+            $result = $next;
+            push @triangle, $bool if $args{triangle};
+        }
+        else {
+            $result = $apply->($result, $next);
+            push @triangle, $result if $args{triangle};
+        }
     }
 
     return @triangle if $args{triangle};
+    return $bool     if $trait eq 'chain';
     return $result;
 }
 
