@@ -113,7 +113,9 @@ sub reduce {
 
     my $apply = sub {
         my ($a, $b) = @_;
-        return applyop( $op, $trait eq 'right' ? ($b, $a) : ($a, $b) );
+        my @results = applyop( $op, $trait eq 'right' ? ($b, $a) : ($a, $b) );
+        return \@results if !$args{flat};
+        return @results;
     };
 
     while (@list) {
