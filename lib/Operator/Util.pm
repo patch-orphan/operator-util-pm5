@@ -91,9 +91,7 @@ sub reduce {
     my ($op, $list, %args) = @_;
     my ($type, $trait);
 
-    return if ref $list ne 'ARRAY';
-
-    my @list = @$list;
+    my @list = ref $list eq 'ARRAY' ? @$list : $list;
 
     return unless @list;
     return $list[0] if @list == 1;
@@ -139,6 +137,9 @@ sub zip {
     my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
 
+    $lhs = [$lhs] if ref $lhs ne 'ARRAY';
+    $rhs = [$rhs] if ref $rhs ne 'ARRAY';
+
     while (@$lhs && @$rhs) {
         $a = shift @$lhs;
         $b = shift @$rhs;
@@ -151,6 +152,9 @@ sub zip {
 sub cross {
     my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
+
+    $lhs = [$lhs] if ref $lhs ne 'ARRAY';
+    $rhs = [$rhs] if ref $rhs ne 'ARRAY';
 
     for my $a (@$lhs) {
         for my $b (@$rhs) {
@@ -166,6 +170,9 @@ sub hyper {
     my $dwim_left  = $args{dwim_left};
     my $dwim_right = $args{dwim_right};
     my ($length, @results);
+
+    $lhs = [$lhs] if ref $lhs ne 'ARRAY';
+    $rhs = [$rhs] if ref $rhs ne 'ARRAY';
 
     if (!$dwim_left && !$dwim_right) {
         if (@$lhs != @$rhs) {
@@ -259,29 +266,31 @@ This is an early release of Operator::Util.  The interface and functionality may
 
 The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  Unary opstrings must be stated in the full form with C<prefix:> or C<postfix:> prepended.  Note however that the provided functions do not modify the operand arguments, therefore rendering C<'postfix:++'> and C<'postfix:--'> as no-ops.
 
+When a list is passed as an argument for any of the functions, it must be either an array reference or a scalar value that will be used as a single-element list.
+
 The following functions are provided but are not exported by default.
 
 =over 4
 
-=item reduce OPSTRING, ARRAYREF [, triangle => 1 ]
+=item reduce OPSTRING, LIST [, triangle => 1 ]
 
 C<reducewith> is an alias for C<reduce>.  It may be desirable to use C<reducewith> to avoid naming conflicts or confusion with L<List::Util/reduce>.
 
-=item zip OPSTRING, ARRAYREF1, ARREYREF2
+=item zip OPSTRING, LIST1, LIST2
 
-=item zip ARRAYREF1, ARREYREF2
+=item zip LIST1, LIST2
 
 C<zipwith> is an alias for C<reduce>.
 
-=item cross OPSTRING, ARRAYREF1, ARREYREF2
+=item cross OPSTRING, LIST1, LIST2
 
-=item cross ARRAYREF1, ARREYREF2
+=item cross LIST1, LIST2
 
 C<crosswith> is an alias for C<reduce>.
 
-=item hyper OPSTRING, ARRAYREF1, ARRAYREF2 [, dwim_left => 1, dwim_right => 1 ]
+=item hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
 
-=item hyper OPSTRING, ARRAYREF
+=item hyper OPSTRING, LIST
 
 C<hyperwith> is an alias for C<reduce>.
 
