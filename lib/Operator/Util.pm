@@ -264,7 +264,7 @@ This is an early release of Operator::Util.  The interface and functionality may
 
 =head1 DESCRIPTION
 
-...
+A pragmatic approach at providing the functionality of many of Perl 6's meta operators in Perl 5.
 
 The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  Unary opstrings must be stated in the full form with C<prefix:> or C<postfix:> prepended.  Note however that the provided functions do not modify the operand arguments, therefore rendering C<'postfix:++'> and C<'postfix:--'> as no-ops.
 
