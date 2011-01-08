@@ -134,7 +134,8 @@ sub reduce {
 }
 
 sub zip {
-    my ($op, $lhs, $rhs) = @_;
+    my $op = @_ == 2 ? 'infix:,' : shift;
+    my ($lhs, $rhs) = @_;
     my ($a, $b, @results);
 
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
@@ -150,7 +151,8 @@ sub zip {
 }
 
 sub cross {
-    my ($op, $lhs, $rhs) = @_;
+    my $op = @_ == 2 ? 'infix:,' : shift;
+    my ($lhs, $rhs) = @_;
     my ($a, $b, @results);
 
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
