@@ -1,62 +1,48 @@
-use v6;
-use Test;
+use Test::More tests => 93;
 
-plan 92;
-
-=begin pod
-
-=head1 DESCRIPTION
-
-This test tests the C<[...]> reduce metaoperator.
-
-Reference:
-L<"http://groups.google.de/group/perl.perl6.language/msg/bd9eb275d5da2eda">
-
-=end pod
-
-# L<S03/"Reduction operators">
+use ok 'Operator::Util', qw( reduce );
 
 # [...] reduce metaoperator
 {
-  my @array = <5 -3 7 0 1 -9>;
-  my $sum   = 5 + -3 + 7 + 0 + 1 + -9; # laziness :)
+    my @array = (5, -3, 7, 0, 1, -9);
+    my $sum   = 5 + -3 + 7 + 0 + 1 + -9; # laziness :)
 
-  is(([+] @array),      $sum, "[+] works");
-  is(([*]  1,2,3),    (1*2*3), "[*] works");
-  is(([-]  1,2,3),    (1-2-3), "[-] works");
-  is(([/]  12,4,3),  (12/4/3), "[/] works");
-  is(([div]  12,4,3),  (12 div 4 div 3), "[div] works");
-  is(([**] 2,2,3),  (2**2**3), "[**] works");
-  is(([%]  13,7,4), (13%7%4),  "[%] works");
-  is(([mod]  13,7,4), (13 mod 7 mod 4),  "[mod] works");
+    is reduce('+',   \@array ), $sum,           'reduce(+) works';
+    is reduce('*',   [1,2,3] ), 1*2*3,          'reduce(*) works';
+    is reduce('-',   [1,2,3] ), 1-2-3,          'reduce(-) works';
+    is reduce('/',   [12,4,3]), 12/4/3,         'reduce(/) works';
+    is reduce('div', [12,4,3]), 12 div 4 div 3, 'reduce(div) works';
+    is reduce('**',  [2,2,3] ), 2**2**3,        'reduce(**) works';
+    is reduce('%',   [13,7,4]), 13%7%4,         'reduce(%) works';
+    is reduce('mod', [13,7,4]), 13 mod 7 mod 4, 'reduce(mod) works';
 
-  is((~ [\+] @array), "5 2 9 9 10 1", "[\\+] works");
-  is((~ [\-] 1, 2, 3), "1 -1 -4",      "[\\-] works");
+    is_deeply [reduce '+', \@array, triangle=>1], [5,2,9,9,10,1], 'triangle reduce(+) works';
+    is_deeply [reduce '-', [1,2,3], triangle=>1], [1,-1,-4],      'triangle reduce(-) works';
 }
 
 {
-  is ([~] <a b c d>), "abcd", "[~] works";
-  is (~ [\~] <a b c d>), "a ab abc abcd", "[\\~] works";
+    is reduce('~', [qw<a b c d>]), 'abcd', 'reduce(.) works';
+    is_deeply [reduce '~', [qw<a b c d>], triangle=>1], [qw<a ab abc abcd>], 'triangle reduce(.) works';
 }
 
 {
-    ok  ([<]  1, 2, 3, 4), "[<] works (1)";
-    nok ([<]  1, 3, 2, 4), "[<] works (2)";
-    ok  ([>]  4, 3, 2, 1), "[>] works (1)";
-    nok ([>]  4, 2, 3, 1), "[>] works (2)";
-    ok  ([==] 4, 4, 4),    "[==] works (1)";
-    nok ([==] 4, 5, 4),    "[==] works (2)";
-    ok  ([!=] 4, 5, 6),    "[!=] works (1)";
-    nok ([!=] 4, 4, 4),    "[!=] works (2)";
+    ok  reduce('<',  ['1,2,3,4']), 'reduce(<) works (1)';
+    ok !reduce('<',  ['1,3,2,4']), 'reduce(<) works (2)';
+    ok  reduce('>',  ['4,3,2,1']), 'reduce(>) works (1)';
+    ok !reduce('>',  ['4,2,3,1']), 'reduce(>) works (2)';
+    ok  reduce('==', ['4,4,4']  ), 'reduce(==) works (1)';
+    ok !reduce('==', ['4,5,4']  ), 'reduce(==) works (2)';
+    ok  reduce('!=', ['4,5,6']  ), 'reduce(!=) works (1)';
+    ok !reduce('!=', ['4,4,4']  ), 'reduce(!=) works (2)';
 }
 
 {
-    ok (! [eq] <a a b a>),    '[eq] basic sanity (positive)';
-    ok (  [eq] <a a a a>),    '[eq] basic sanity (negative)';
-    ok (  [ne] <a b c a>),    '[ne] basic sanity (positive)';
-    ok (! [ne] <a a b c>),    '[ne] basic sanity (negative)';
-    ok (  [lt] <a b c e>),    '[lt] basic sanity (positive)';
-    ok (! [lt] <a a c e>),    '[lt] basic sanity (negative)';
+    ok !reduce('eq', [qw<a a b a>]), 'reduce(eq) basic sanity (positive)';
+    ok  reduce('eq', [qw<a a a a>]), 'reduce(eq) basic sanity (negative)';
+    ok  reduce('ne', [qw<a b c a>]), 'reduce(ne) basic sanity (positive)';
+    ok !reduce('ne', [qw<a a b c>]), 'reduce(ne) basic sanity (negative)';
+    ok  reduce('lt', [qw<a b c e>]), 'reduce(lt) basic sanity (positive)';
+    ok !reduce('lt', [qw<a a c e>]), 'reduce(lt) basic sanity (negative)';
 }
 
 #?rakudo skip "=:= NYI"
@@ -236,6 +222,3 @@ is( ([\R~] 'a'..*).[^8].join(', '), 'a, ba, cba, dcba, edcba, fedcba, gfedcba, h
     is B.new.n, 'bbbb', '[~] works in second class';
     is ([~] 1, 2, 5), '125', '[~] works outside class';
 }
-
-done;
-# vim: ft=perl6
