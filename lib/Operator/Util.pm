@@ -62,15 +62,20 @@ my %ops = (
     'infix:xor' => sub { $_[0] xor $_[1] },
 
     # unary prefix
-    'prefix:++' => sub { ++$_[0] },
-    'prefix:--' => sub { --$_[0] },
-    'prefix:!'  => sub {  !$_[0] },
-    'prefix:~'  => sub {  ~$_[0] },
-    'prefix:\\' => sub {  \$_[0] },
-    'prefix:+'  => sub {  +$_[0] },
-    'prefix:-'  => sub {  -$_[0] },
+    'prefix:++' => sub { ++$_[0]  },
+    'prefix:--' => sub { --$_[0]  },
+    'prefix:!'  => sub {  !$_[0]  },
+    'prefix:~'  => sub {  ~$_[0]  },
+    'prefix:\\' => sub {  \$_[0]  },
+    'prefix:+'  => sub {  +$_[0]  },
+    'prefix:-'  => sub {  -$_[0]  },
+    'prefix:$'  => sub { ${$_[0]} },
+    'prefix:@'  => sub { @{$_[0]} },
+    'prefix:%'  => sub { %{$_[0]} },
+    'prefix:&'  => sub { &{$_[0]} },
+    'prefix:*'  => sub { *{$_[0]} },
 
-    # unary postfix (no-ops!)
+    # unary postfix
     'postfix:++' => sub { $_[0]++ },
     'postfix:--' => sub { $_[0]-- },
 );
