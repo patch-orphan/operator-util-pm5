@@ -10,10 +10,11 @@ my $build = Module::Build->new(
     requires => {
         'perl' => '5.6.0',
     },
-    meta_add => {
+    meta_merge => {
         resources => {
             homepage   => 'http://github.com/patch/operator-util-pm5',
             repository => 'git://github.com/patch/operator-util-pm5.git',
+            bugtracker => 'http://github.com/patch/operator-util-pm5/issues',
         },
     },
 );
