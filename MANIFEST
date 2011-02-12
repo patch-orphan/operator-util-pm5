@@ -1,0 +1,9 @@
+Build.PL
+Changes
+lib/Operator/Util.pm
+MANIFEST			This list of files
+README
+t/cross.t
+t/hyper.t
+t/reduce.t
+t/zip.t
