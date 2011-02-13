@@ -7,11 +7,12 @@ my $build = Module::Build->new(
     create_license => 1,
     create_readme  => 1,
     build_requires => {
-        'ok'         => 0.01,
+        'ok'         => 0,
         'Test::More' => 0.40,
     },
     requires => {
-        'perl' => '5.6.0',
+        'perl'   => '5.6.0',
+        'parent' => 0,
     },
     meta_merge => {
         resources => {
