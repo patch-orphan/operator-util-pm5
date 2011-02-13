@@ -6,6 +6,9 @@ my $build = Module::Build->new(
     license        => 'Perl_5',
     create_license => 1,
     create_readme  => 1,
+    configure_requires => {
+        'Module::Build' => 0.36_14,
+    },
     build_requires => {
         'ok'         => 0,
         'Test::More' => 0.40,
