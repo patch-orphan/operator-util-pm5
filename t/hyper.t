@@ -57,271 +57,118 @@ my @e;
 }
 
 { # extension
-    @r = (1,2,3,4) >>~>> <A B C D E>;
-    @e = <1A 2B 3C 4D>;
-    is(~@r, ~@e, "list-level element truncate on rhs ASCII notation");
+    @r = hyper '.', [1,2,3,4], [qw<A B C D E>], dwim_right=>1;
+    @e = qw<1A 2B 3C 4D>;
+    is_deeply \@r, \@e, "list-level element truncate on rhs";
 
-    @r = (1,2,3,4,5) <<~<< <A B C D>;
-    @e =  <1A 2B 3C 4D>;
-    is(~@r, ~@e, "list-level element truncate on lhs ASCII notation");
+    @r = '.', [1,2,3,4,5], [qw<A B C D>], dwim_left=>1;
+    @e =  qw<1A 2B 3C 4D>;
+    is_deeply \@r, \@e, "list-level element truncate on lhs";
 
-    @r = (1,2,3,4) >>~>> <A B C>;
-    @e = <1A 2B 3C 4A>;
-    is(~@r, ~@e, "list-level element extension on rhs ASCII notation");
+    @r = '.', [1,2,3,4], [qw<A B C>], dwim_right=>1; 
+    @e = qw<1A 2B 3C 4A>;
+    is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = (1,2,3) <<~<< <A B C D>;
-    @e =  <1A 2B 3C 1D>;
-    is(~@r, ~@e, "list-level element extension on lhs ASCII notation");
+    @r = '.', [1,2,3], [qw<A B C D>], dwim_left=>1;
+    @e =  qw<1A 2B 3C 1D>;
+    is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = (1,2,3,4) >>~>> <A B>;
-    @e = <1A 2B 3A 4B>;
-    is(~@r, ~@e, "list-level element extension on rhs ASCII notation");
+    @r = '.', [1,2,3,4], [qw<A B>], dwim_right=>1;
+    @e = qw<1A 2B 3A 4B>;
+    is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = (1,2) <<~<< <A B C D>;
-    @e =  <1A 2B 1C 2D>;
-    is(~@r, ~@e, "list-level element extension on lhs ASCII notation");
+    @r = '.', [1,2], [qw<A B C D>], dwim_left=>1;
+    @e =  qw<1A 2B 1C 2D>;
+    is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = (1,2,3,4) >>~>> <A>;
-    @e = <1A 2A 3A 4A>;
-    is(~@r, ~@e, "list-level element extension on rhs ASCII notation");
+    @r = '.', [1,2,3,4], ['A'], dwim_right=>1;
+    @e = qw<1A 2A 3A 4A>;
+    is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = (1,) <<~<< <A B C D>;
-    @e = <1A 1B 1C 1D>;
-    is(~@r, ~@e, "list-level element extension on lhs ASCII notation");
+    @r = '.', [1,], [qw<A B C D>], dwim_left=>1;
+    @e = qw<1A 1B 1C 1D>;
+    is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = (1,2,3,4) >>~>> 'A';
-    @e = <1A 2A 3A 4A>;
-    is(~@r, ~@e, "scalar element extension on rhs ASCII notation");
+    @r = '.', [1,2,3,4], 'A', dwim_right=>1;
+    @e = qw<1A 2A 3A 4A>;
+    is_deeply \@r, \@e, "scalar element extension on rhs";
 
-    @r = 1 <<~<< <A B C D>;
-    @e = <1A 1B 1C 1D>;
-    is(~@r, ~@e, "scalar element extension on lhs ASCII notation");
+    @r = '.', 1, [qw<A B C D>], dwim_left=>1;
+    @e = qw<1A 1B 1C 1D>;
+    is_deeply \@r, \@e, "scalar element extension on lhs";
 };
 
-{ # dimension upgrade - unicode
-    @r = (1,2,3,4) »~» <A B C D E>;
-    @e = <1A 2B 3C 4D>;
-    is(~@r, ~@e, "list-level element truncate on rhs unicode notation");
-
-    @r = (1,2,3,4,5) «~« <A B C D>;
-    @e =  <1A 2B 3C 4D>;
-    is(~@r, ~@e, "list-level element truncate on lhs unicode notation");
-
-    @r = (1,2,3,4) »~» <A B C>;
-    @e = <1A 2B 3C 4A>;
-    is(~@r, ~@e, "list-level element extension on rhs unicode notation");
-
-    @r = (1,2,3) «~« <A B C D>;
-    @e =  <1A 2B 3C 1D>;
-    is(~@r, ~@e, "list-level element extension on lhs unicode notation");
-
-    @r = (1,2,3,4) »~» <A B>;
-    @e = <1A 2B 3A 4B>;
-    is(~@r, ~@e, "list-level element extension on rhs unicode notation");
-
-    @r = (1,2) «~« <A B C D>;
-    @e =  <1A 2B 1C 2D>;
-    is(~@r, ~@e, "list-level element extension on lhs unicode notation");
-
-    @r = (1,2,3,4) »~» <A>;
-    @e = <1A 2A 3A 4A>;
-    is(~@r, ~@e, "list-level element extension on rhs unicode notation");
-
-    @r = (1,) «~« <A B C D>;
-    @e = <1A 1B 1C 1D>;
-    is(~@r, ~@e, "list-level element extension on lhs unicode notation");
-
-    @r = (1,2,3,4) »~» 'A';
-    @e = <1A 2A 3A 4A>;
-    is(~@r, ~@e, "scalar element extension on rhs unicode notation");
-
-    @r = 1 «~« <A B C D>;
-    @e = <1A 1B 1C 1D>;
-    is(~@r, ~@e, "scalar element extension on lhs unicode notation");
-};
-
-{ # unary postfix with integers
-    my @r;
-    @r = (1, 4, 9)».sqrt;
-    my @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on integer list elements");
-
-    @r = (1, 4, 9)>>.sqrt;
-    @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on integer list elements (ASCII)");
-}
-
-#?rakudo skip '@array»++'
 {
     my (@r, @e);
-    (@r = (1, 4, 9))»++;
-    @e = (2, 5, 10);
-    is(~@r, ~@e, "operator call on integer list elements");
-
-    (@r = (1, 4, 9)).»++;
-    is(~@r, ~@e, "operator call on integer list elements (Same thing, dot form)");
-
-    (@r = (1, 4, 9))».++;
-    @e = (2, 5, 9);
-    is(~@r, ~@e, "operator call on integer list elements (Same thing, dot form)");
-
-    (@r = (1, 4, 9)).».++;
-    is(~@r, ~@e, "operator call on integer list elements (Same thing, dot form)");
-
-    (@r = (1, 4, 9))\  .»\  .++;
-    @e = (2, 5, 9);
-    is(~@r, ~@e, "operator call on integer list elements (Same thing, upspace form)");
-};
-
-{ # unary postfix again, but with a twist
-    my @r;
-    eval '@r = ("f", "oo", "bar")».chars';
-    my @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on list elements");
-
-    eval '@r = ("f", "oo", "bar").».chars';
-    @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on list elements (Same thing, dot form)");
-
-
-    eval '@r = ("f", "oo", "bar")>>.chars';
-    @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on list elements (ASCII)");
-
-    eval '@r = ("f", "oo", "bar").>>.chars';
-    @e = (1, 2, 3);
-    is(~@r, ~@e, "method call on list elements (ASCII, Same thing, dot form)");
-};
-
-{ # unary postfix on a user-defined object
-	my $t;
-	class FooTest { method bar { 42 } }; $t = FooTest.new.bar;
-	is($t, 42, 'plain method call works OK');
-
-        my @r;
-	class FooTest2 { method bar { 42 } }; @r = (FooTest2.new)>>.bar;
-	my @e = (42);
-	is(~@r, ~@e, "hyper-method-call on list of user-defined objects");
+    @r = hyper 'prefix:++', [1,4,9];
+    @e = (2,5,10);
+    is_deeply \@r, \@e, "operator call on integer list elements";
 };
 
 { # distribution for unary prefix
     my @r;
-    @r = -« ([1, 2], [3, [4, 5]]);
+    @r = hyper 'prefix:-', [[1, 2], [3, [4, 5]]];
     my @e = ([-1, -2], [-3, [-4, -5]]);
-    is(~@r, ~@e, "distribution for unary prefix");
-    is_deeply(@r, @e, "distribution for unary prefix, deep comparison");
-
-    @r = -<< ([1, 2], [3, [4, 5]]);
-    @e = ([-1, -2], [-3, [-4, -5]]);
-    is(~@r, ~@e, "distribution for unary prefix, ASCII");
-    is_deeply(@r, @e, "distribution for unary prefix, ASCII, deep comparison");
+    is_deeply \@r, \@e, "distribution for unary prefix";
 };
 
 { # distribution for unary postfix autoincrement
     my @r;
     @r = ([1, 2], [3, [4, 5]]);
-    @r»++;
+    hyper 'postfix:++', \@r;
     my @e = ([2, 3], [4, [5, 6]]);
-    #?pugs todo
-    is(~@r, ~@e, "distribution for unary postfix autoincr");
-    is_deeply(@r, @e, "distribution for unary postfix autoincr, deep comparison");
-
-    @r = ([1, 2], [3, [4, 5]]);
-    @r>>++;
-    @e = ([2, 3], [4, [5, 6]]);
-    #?pugs todo
-    is(~@r, ~@e, "distribution for unary postfix autoincr, ASCII");
-    is_deeply(@r, @e, "distribution for unary postfix autoincr, ASCII, deep comparison");
+    is_deeply \@r, \@e, "distribution for unary postfix autoincr";
 };
 
-#?DOES 3
-{ # distribution for binary infix - ASCII
+{ # distribution for binary infix
     my @r;
-    @r = (1, 2, [3, 4]) >>+<< (4, 5, [6, 7]);
+    @r = hyper '+', [1, 2, [3, 4]], [4, 5, [6, 7]];
     my @e = (5, 7, [9, 11]);
-    is(~@r, ~@e, "distribution for binary infix, same shape, ASCII");
-    is_deeply(@r, @e, "distribution for binary infix, same shape, ASCII, deep comparision");
+    is_deeply \@r, \@e, "distribution for binary infix, same shape";
 
-    @r = (1, 2, [3, 4]) >>+>> (5, 6, 7);
+    @r = hyper '+', [1, 2, [3, 4]], [5, 6, 7], dwim_right=>1;
     @e = (6, 8, [10, 11]);
-    is(~@r, ~@e, "distribution for binary infix, dimension upgrade, ASCII");
-    is_deeply(@r, @e, "distribution for binary infix, dimension upgrade, ASCII, deep comparison");
+    is_deeply \@r, \@e, "distribution for binary infix, dimension upgrade";
 
-    @r = ([1, 2], 3) <<+>> (4, [5, 6]);
+    @r = hyper '+', [[1, 2], 3], [4, [5, 6]], dwim=>1;
     @e = ([5, 6], [8, 9]);
-    is(~@r, ~@e, "distribution for binary infix, S03 cross-upgrade, ASCII");
-    is_deeply(@r, @e, "distribution for binary infix, S03 cross-upgrade, ASCII, deep comparison");
-};
-
-#?DOES 3
-{ # distribution for binary infix - unicode
-    my @r;
-    @r = (1, 2, [3, 4]) »+« (4, 5, [6, 7]);
-    my @e = (5, 7, [9, 11]);
-    is(~@r, ~@e, "distribution for binary infix, same shape");
-    is_deeply(@r, @e, "distribution for binary infix, same shape, deep comparison");
-
-    @r = (1, 2, [3, 4]) »+» (5, 6, 7);
-    @e = (6, 8, [10, 11]);
-    is(~@r, ~@e, "distribution for binary infix, dimension upgrade");
-    is_deeply(@r, @e, "distribution for binary infix, dimension upgrade, deep comparison");
-
-    @r = ([1, 2], 3) «+» (4, [5, 6]);
-    @e = ([5, 6], [8, 9]);
-    is(~@r, ~@e, "distribution for binary infix, S03 cross-upgrade");
-    is_deeply(@r, @e, "distribution for binary infix, S03 cross-upgrade, deep comparison");
+    is_deeply \@r, \@e, "distribution for binary infix, S03 cross-upgrade";
 };
 
 { # regression test, ensure that hyper works on arrays
     my @r1;
     my @r2;
-    my @e1 = (2, 4, 6);
-    my @a = (1, 2, 3);
-    @r1 = @a >>+<< @a;
-    is(~@r1, ~@e1, "hyper op works on variables, too.");
+    my @e1 = (2,4,6);
+    my @a  = (1,2,3);
+    @r1 = hyper '+', \@a, \@a;
+    is_deeply \@r1, \@e1, "hyper works on variables, too.";
 }
 {
-    my @a = (1, 2, 3);
-    my @e2 = (2, 3, 4);
-    my @r2 = @a >>+>> 1;
-    is(~@r2, ~@e2, "hyper op and correctly promotes scalars");
+    my @a  = (1,2,3);
+    my @e2 = (2,3,4);
+    my @r2 = hyper '+', \@a, 1, dwim_right=>1;
+    is_deeply \@r2, \@e2, "hyper op and correctly promotes scalars";
 };
-
 
 # mixed hyper and reduce metaops -
 # this unveils a spec bug as << recurses into arrays and [+] never gets applied,
 # so we disable the entire chunk for now.
 {
-    is ~([+]<< ([1,2,3], [4,5,6])), "6 15", "mixed hyper and reduce metaop ([+]<<) works";
-    ## XXX: Test for [+]<<<< - This is unspecced, commenting it out
-    #is ~([+]<<<< ([[1,2],[3,4]],[[5,6],[7,8]])), "3 7 11 15",
-    #  "mixed double hyper and reduce metaop ([+]<<<<) works";
-
-    is ~([+]« [1,2,3], [4,5,6]), "6 15",
-      "mixed Unicode hyper and reduce metaop ([+]«) works";
+    is_deeply [hyper '[+]', [[1,2,3], [4,5,6]]], [6,15], "mixed hyper and reduce metaop ([+]<<) works";
 }
 
 { # hyper dereferencing
     my @array = (
         { key => 'val' },
         { key => 'val' },
-        { key => 'val' }
+        { key => 'val' },
     );
 
-    my $full = join '', eval '@array>>.<key>';
+    my $full = join '', hyper 'postcircumfix:{}', \@array, 'key', dwim_right=>1;
     is($full, 'valvalval', 'hyper-dereference an array');
 
     my $part = join '', eval '@array[0,1]>>.<key>';
     is($part, 'valval', 'hyper-dereference an array slice');
-}
-
-{ # junction hyper -- regression?
-    my @a = 1..3;
-    my @b = 4..6;
-    ok ?(@a »|« @b), '»|« hyperjunction evals';
-    ok ?(@a >>|<< @b), '>>|<< hyperjunction evals, ASCII';
-    ok ?(@a »&« @b), '»&« hyperjunction evals';
-    ok ?(@a >>&<< @b), '>>&<< hyperjunction evals, ASCII';
 }
 
 # test hypers on hashes
@@ -419,19 +266,6 @@ my @e;
 }
 
 {
-    our sub postfix:<!>($a) {
-        [*] 1..$a;
-    }
-
-    my %a = a => 1, b => 2, c => 3;
-    my %r = %a>>!;
-    is +%r,   3, 'hash - >>! result has right number of keys';
-    is %r<a>, 1, 'hash - correct result from >>!';
-    is %r<b>, 2, 'hash - correct result from >>!';
-    is %r<c>, 6, 'hash - correct result from >>!';
-}
-
-{
     my %a = a => 1, b => 2, c => 3;
 
     my %r = %a >>*>> 4;
@@ -516,52 +350,6 @@ my @e;
 
 {
     my @a = (1, { a => 2, b => 3 }, 4);
-    my @b = <a b c>;
-    my @c = ('z', { a => 'y', b => 'x' }, 'w');
-    my @d = 'a'..'f';
-
-    my @r = @a «~» @b;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from «~»';
-    is @r[1]<a>, "2b", 'hash in array - correct result from «~»';
-    is @r[1]<b>, "3b", 'hash in array - correct result from «~»';
-    is @r[2], "4c", 'hash in array - correct result from «~»';
-
-    @r = @a »~« @c;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1z", 'hash in array - correct result from »~«';
-    is @r[1]<a>, "2y", 'hash in array - correct result from »~«';
-    is @r[1]<b>, "3x", 'hash in array - correct result from »~«';
-    is @r[2], "4w", 'hash in array - correct result from »~«';
-
-    @r = @a »~» @d;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from »~»';
-    is @r[1]<a>, "2b", 'hash in array - correct result from »~»';
-    is @r[1]<b>, "3b", 'hash in array - correct result from »~»';
-    is @r[2], "4c", 'hash in array - correct result from »~»';
-
-    @r = @d «R~« @a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from «R~«';
-    is @r[1]<a>, "2b", 'hash in array - correct result from «R~«';
-    is @r[1]<b>, "3b", 'hash in array - correct result from «R~«';
-    is @r[2], "4c", 'hash in array - correct result from «R~«';
-
-    @r = @a «~» @d;
-    is +@r, 6, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from «~»';
-    is @r[1]<a>, "2b", 'hash in array - correct result from «~»';
-    is @r[1]<b>, "3b", 'hash in array - correct result from «~»';
-    is @r[2], "4c", 'hash in array - correct result from «~»';
-    is @r[3], "1d", 'hash in array - correct result from «~»';
-    is @r[4]<a>, "2e", 'hash in array - correct result from «~»';
-    is @r[4]<b>, "3e", 'hash in array - correct result from «~»';
-    is @r[5], "4f", 'hash in array - correct result from «~»';
-}
-
-{
-    my @a = (1, { a => 2, b => 3 }, 4);
     my @r = -<<@a;
     is +@r, 3, 'hash in array - result array is the correct length';
     is @r[0], -1, 'hash in array - correct result from -<<';
@@ -589,74 +377,11 @@ my @e;
     is @a[2], 4, 'hash in array - correct result from ++<<';
 }
 
-{
-    my @a = (1, { a => 2, b => 3 }, 4);
-    my @r = -«@a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], -1, 'hash in array - correct result from -«';
-    is @r[1]<a>, -2, 'hash in array - correct result from -«';
-    is @r[1]<b>, -3, 'hash in array - correct result from -«';
-    is @r[2], -4, 'hash in array - correct result from -«';
-
-    @r = ++«@a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], 2, 'hash in array - correct result from ++«';
-    is @r[1]<a>, 3, 'hash in array - correct result from ++«';
-    is @r[1]<b>, 4, 'hash in array - correct result from ++«';
-    is @r[2], 5, 'hash in array - correct result from ++«';
-
-    @r = @a»--;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], 2, 'hash in array - correct result from ++«';
-    is @r[1]<a>, 3, 'hash in array - correct result from ++«';
-    is @r[1]<b>, 4, 'hash in array - correct result from ++«';
-    is @r[2], 5, 'hash in array - correct result from ++«';
-    is +@a, 3, 'hash in array - result array is the correct length';
-    is @a[0], 1, 'hash in array - correct result from ++«';
-    is @a[1]<a>, 2, 'hash in array - correct result from ++«';
-    is @a[1]<b>, 3, 'hash in array - correct result from ++«';
-    is @a[2], 4, 'hash in array - correct result from ++«';
-}
-
-# test non-UTF-8 input
-{
-    my $t = '(1, 2, 3) »+« (4, 3, 2)';
-    ok !eval($t.encode('ISO-8859-1')),
-       'Latin-1 »+« without pre-declaration is an error';
-}
-
 # Test for 'my @a = <a b c> »~» "z";' wrongly
 # setting @a to [['az', 'bz', 'cz']].
 {
     my @a = <a b c> »~» 'z';
     is "{@a[0]}, {@a[1]}, {@a[2]}", 'az, bz, cz', "dwimmy hyper doesn't return an itemized list";
-}
-
-# is assumed to be infinitely extensible>
-{
-    @r = <A B C D E> »~» (1, 2, 3, *);
-    @e = <A1 B2 C3 D3 E3>;
-    is ~@r, ~@e, 'dwimmy hyper extends lists ending with * by copying the last element';
-
-    @r = <A B C D E> «~» (1, 2, 3, *);
-    @e = <A1 B2 C3 D3 E3>;
-    is ~@r, ~@e, 'dwimmy hyper extends lists ending with * by copying the last element';
-
-    @r = (1, 2, 3, *) «~« <A B C D E>;
-    @e = <1A 2B 3C 3D 3E>;
-    is ~@r, ~@e, 'dwimmy hyper extends lists ending with * by copying the last element';
-
-    @r = (1, 2, 3, *) «~» <A B C D E>;
-    @e = <1A 2B 3C 3D 3E>;
-    is ~@r, ~@e, 'dwimmy hyper extends lists ending with * by copying the last element';
-
-    @r = (1, 2, *) «~» (4, 5, *);
-    @e = <14 25>;
-    is ~@r, ~@e, 'dwimmy hyper omits * when both arguments of same length have one';
-
-    @r = (1, 2, *) «~» (4, 5, 6, *);
-    @e = <14 25 26>;
-    is ~@r, ~@e, 'dwimmy hyper takes longer length given two arguments ending with *';
 }
 
 {
