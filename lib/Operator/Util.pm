@@ -174,8 +174,8 @@ sub cross {
 
 sub hyper {
     my ($op, $lhs, $rhs, %args) = @_;
-    my $dwim_left  = $args{dwim_left};
-    my $dwim_right = $args{dwim_right};
+    my $dwim_left  = $args{dwim_left}  || $args{dwim};
+    my $dwim_right = $args{dwim_right} || $args{dwim};
     my ($length, @results);
 
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
