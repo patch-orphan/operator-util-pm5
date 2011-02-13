@@ -1,19 +1,25 @@
 use Module::Build;
 
 my $build = Module::Build->new(
-    module_name  => 'Operator::Util',
-    license      => 'perl',
+    module_name    => 'Operator::Util',
+    release_status => 'testing',
+    license        => 'Perl_5',
+    create_license => 1,
+    create_readme  => 1,
     build_requires => {
-        'ok'         => '0.01',
-        'Test::More' => '0.40',
+        'ok'         => 0.01,
+        'Test::More' => 0.40,
     },
     requires => {
         'perl' => '5.6.0',
     },
     meta_merge => {
         resources => {
-            homepage   => 'http://github.com/patch/operator-util-pm5',
-            repository => 'git://github.com/patch/operator-util-pm5.git',
+            repository => {
+                type => 'git',
+                url  => 'git://github.com/patch/operator-util-pm5.git',
+                web  => 'http://github.com/patch/operator-util-pm5',
+            },
             bugtracker => 'http://github.com/patch/operator-util-pm5/issues',
         },
     },

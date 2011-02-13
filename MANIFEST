@@ -1,7 +1,10 @@
 Build.PL
 Changes
+INSTALL
 lib/Operator/Util.pm
+LICENSE
 MANIFEST			This list of files
+META.yml
 README
 t/cross.t
 t/hyper.t
