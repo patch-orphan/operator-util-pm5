@@ -1,0 +1,145 @@
+NAME
+    Operator::Util - A selection of higher-order functions that take
+    operators as arguments
+
+VERSION
+    This document describes Operator::Util version 0.00_1.
+
+SYNOPSIS
+        use Operator::Util qw(
+            reduce reducewith
+            zip zipwith
+            cross crosswith
+            hyper hyperwith
+            applyop reverseop
+        );
+
+WARNING
+    This is an early release of Operator::Util. The interface and
+    functionality may change in the future based on user feedback. Please
+    make suggestions by creating an issue at
+    <http://github.com/patch/operator-util-pm5/issues>.
+
+DESCRIPTION
+    A pragmatic approach at providing the functionality of many of Perl 6's
+    meta operators in Perl 5.
+
+    The terms "operator string" or "opstring" are used to describe a string
+    that represents an operator, such as the string '+' for the addition
+    operator or the string '.' for the concatenation operator. Except where
+    noted, opstrings default to binary infix operators and the short form
+    may be used, e.g., '*' instead of 'infix:*'. Unary opstrings must be
+    stated in the full form with "prefix:" or "postfix:" prepended. Note
+    however that the provided functions do not modify the operand arguments,
+    therefore rendering 'postfix:++' and 'postfix:--' as no-ops.
+
+    When a list is passed as an argument for any of the functions, it must
+    be either an array reference or a scalar value that will be used as a
+    single-element list.
+
+    The following functions are provided but are not exported by default.
+
+    reduce OPSTRING, LIST [, triangle => 1 ]
+        "reducewith" is an alias for "reduce". It may be desirable to use
+        "reducewith" to avoid naming conflicts or confusion with "reduce" in
+        List::Util.
+
+    zip OPSTRING, LIST1, LIST2
+    zip LIST1, LIST2
+        "zipwith" is an alias for "reduce".
+
+    cross OPSTRING, LIST1, LIST2
+    cross LIST1, LIST2
+        "crosswith" is an alias for "reduce".
+
+    hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
+    hyper OPSTRING, LIST
+        "hyperwith" is an alias for "reduce".
+
+    applyop OPSTRING, OPERAND1, OPERAND2
+    applyop OPSTRING, OPERAND
+        If three arguments are provided to "applyop", apply the binary
+        operator OPSTRING to the aperands OPERAND1 and OPERAND2. If two
+        arguments are provided, apply the unary operator OPSTRING to the
+        aperand OPERAND. The unary form defaults to using prefix operators,
+        so 'prefix:' may be omitted, e.g., '++' instead of 'prefix:++';
+
+            applyop '.', 'foo', 'bar'  # foobar
+            applyop '++', 5            # 6
+
+    reverseop OPSTRING, OPERAND1, OPERAND2
+        "reverseop" provides the same functionality as "applyop" except that
+        OPERAND1 and OPERAND2 are reversed.
+
+            reverseop '.', 'foo', 'bar'  # barfoo
+
+        If an unary opstring is used, "reverseop" has the same functionality
+        as "applyop".
+
+    The optional named-argument "flat" can be passed to "reduce", "zip",
+    "cross", and "hyper". It defaults to 1, which causes the function to
+    return a flat list. When set to 0, it causes the return value from each
+    operator to be stored in an array ref, resulting in a "list of lists"
+    being returned from the function.
+
+        zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
+        zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
+
+TODO
+    *   Add "warn"ings on errors instead of simply "return"ing
+
+    *   Add named unary operators such as "uc" and "lc"
+
+    *   Allow unlimited arrayrefs passed to "zip", "cross", and "hyper"
+        instead of just two
+
+    *   Support meta-operator literals such as "Z" and "X"
+
+    *   Should the first argument optionally be a subroutine ref instead of
+        an operator string?
+
+    *   Should the "flat => 0" option be changed to "lol => 1"?
+
+    *   Convert tests to TestML
+
+SEE ALSO
+    *   "pairwise" in List::MoreUtils is simular to "zip" except that its
+        first argument is a block instead of an operator string and the
+        remaining arguments are arrays instead of array refs:
+
+            pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
+            zip '+', \@array1, \@array2             # Operator::Util
+
+    *   "mesh" a.k.a. "zip" in List::MoreUtils is simular to "zip" when
+        using the default operator ',' except that the arguments are arrays
+        instead of array refs:
+
+            mesh @array1, @array2   # List::MoreUtils
+            zip \@array1, \@array2  # Operator::Util
+
+    *   Set::CrossProduct is an object-oriented alternative to "cross" when
+        using the default operator ","
+
+    *   The "Meta operators" section of Synopsis 3: Perl 6 Operators
+        (<http://perlcabal.org/syn/S03.html#Meta_operators>) is the
+        inspiration for this module
+
+AUTHOR
+    Nick Patch <patch@cpan.org>
+
+ACKNOWLEDGEMENTS
+    *   This module is based on the Perl 6 specification, as described in
+        the Synopsis and implemented in Rakudo
+
+    *   Much of the documentation is based on Synopsis 3: Perl 6 Operators
+        (<http://perlcabal.org/syn/S03.html>)
+
+    *   Most of the tests were forked from the Official Perl 6 Test Suite
+        (<https://github.com/perl6/roast>)
+
+COPYRIGHT AND LICENSE
+    Copyright 2010, 2011 Nick Patch
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
