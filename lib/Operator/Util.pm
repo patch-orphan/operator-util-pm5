@@ -78,6 +78,15 @@ my %ops = (
     # unary postfix
     'postfix:++' => sub { $_[0]++ },
     'postfix:--' => sub { $_[0]-- },
+
+    # circumfix
+    'circumfix:()' => sub { ($_[0]) },
+    'circumfix:[]' => sub { [$_[0]] },
+    'circumfix:{}' => sub { {$_[0]} },
+
+    # postcircumfix
+    'postcircumfix:[]' => sub { $_[0]->[$_[1]] },
+    'postcircumfix:{}' => sub { $_[0]->{$_[1]} },
 );
 
 my %rightops = ('infix:**' => 1);
