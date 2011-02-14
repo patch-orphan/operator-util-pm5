@@ -1,6 +1,6 @@
 NAME
-    Operator::Util - A selection of higher-order functions that take
-    operators as arguments
+    Operator::Util - A selection of array and hash functions that extend
+    operators
 
 VERSION
     This document describes Operator::Util version 0.00_1.
@@ -20,6 +20,8 @@ WARNING
     make suggestions by creating an issue at
     <http://github.com/patch/operator-util-pm5/issues>.
 
+    The documentation is in the process of being thouroughly expanded.
+
 DESCRIPTION
     A pragmatic approach at providing the functionality of many of Perl 6's
     meta operators in Perl 5.
@@ -28,10 +30,9 @@ DESCRIPTION
     that represents an operator, such as the string '+' for the addition
     operator or the string '.' for the concatenation operator. Except where
     noted, opstrings default to binary infix operators and the short form
-    may be used, e.g., '*' instead of 'infix:*'. Unary opstrings must be
-    stated in the full form with "prefix:" or "postfix:" prepended. Note
-    however that the provided functions do not modify the operand arguments,
-    therefore rendering 'postfix:++' and 'postfix:--' as no-ops.
+    may be used, e.g., '*' instead of 'infix:*'. All other operator types
+    (prefix, postfix, circumfix, and postcircumfix) must have the type
+    prepended in the opstrings, e.g., "prefix:++" and "postcircumfix:{}".
 
     When a list is passed as an argument for any of the functions, it must
     be either an array reference or a scalar value that will be used as a
@@ -103,6 +104,8 @@ TODO
     *   Convert tests to TestML
 
 SEE ALSO
+    *   perlop
+
     *   "pairwise" in List::MoreUtils is simular to "zip" except that its
         first argument is a block instead of an operator string and the
         remaining arguments are arrays instead of array refs:
@@ -128,8 +131,8 @@ AUTHOR
     Nick Patch <patch@cpan.org>
 
 ACKNOWLEDGEMENTS
-    *   This module is based on the Perl 6 specification, as described in
-        the Synopsis and implemented in Rakudo
+    *   This module is loosely based on the Perl 6 specification, as
+        described in the Synopsis and implemented in Rakudo
 
     *   Much of the documentation is based on Synopsis 3: Perl 6 Operators
         (<http://perlcabal.org/syn/S03.html>)
