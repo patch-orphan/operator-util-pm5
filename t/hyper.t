@@ -102,7 +102,7 @@ my @e;
 };
 
 TODO: {
-    local $TODO = 'distribution NYI';
+    local $TODO = 'hyper distribution NYI';
 
     { # distribution for unary prefix
         my @r;
@@ -154,7 +154,7 @@ TODO: {
 # this unveils a spec bug as << recurses into arrays and [+] never gets applied,
 # so we disable the entire chunk for now.
 TODO: {
-    local $TODO = 'distribution NYI';
+    local $TODO = 'hyper distribution NYI';
     is_deeply [hyper '[+]', [[1,2,3], [4,5,6]]], [6,15], "mixed hyper and reduce metaop ([+]<<) works";
 }
 
@@ -173,7 +173,8 @@ TODO: {
 }
 
 # test hypers on hashes
-{
+TODO: {
+    local $TODO = 'hyper hash NYI';
     my %a = (a => 1, b => 2, c => 3);
     my %b = (a => 5, b => 6, c => 7);
     my %c = (a => 1, b => 2);
@@ -237,7 +238,8 @@ TODO: {
     is $r{b},          8, 'hash - correct result from <<scalar keys <<';
 }
 
-{
+TODO: {
+    local $TODO = 'hyper hash NYI';
     my %a = (a => 1, b => 2, c => 3);
     my %r = hyper 'prefix:-', \%a;
     is scalar keys %r, 3, 'hash - -<< result has right number of keys';
@@ -266,7 +268,8 @@ TODO: {
     is $a{c},          3, 'hash - correct result from >>++';
 }
 
-{
+TODO: {
+    local $TODO = 'hyper hash NYI';
     my %a = (a => 1, b => 2, c => 3);
 
     my %r = hyper '*', \%a, 4, dwim_right=>1;
@@ -295,7 +298,7 @@ TODO: {
 }
 
 TODO: {
-    local $TODO = 'need an object to test';
+    local $TODO = 'hyper hash NYI and need an object to test';
     my %a = (a => 1, b => -2, c => 3);
     my %r = hyper '->', \%a, 'abs', dwim_right=>1;
     is scalar keys %r, 3, 'hash - >>.abs result has right number of keys';
@@ -305,7 +308,7 @@ TODO: {
 }
 
 TODO: {
-    local $TODO = 'distribution NYI';
+    local $TODO = 'hyper hash and hyper distribution NYI';
     my @a = (1, { a => 2, b => 3 }, 4);
     my @b = qw<a b c>;
     my @c = ('z', { a => 'y', b => 'x' }, 'w');
@@ -355,7 +358,7 @@ TODO: {
 }
 
 TODO: {
-    local $TODO = 'distribution NYI';
+    local $TODO = 'hyper hash and hyper distribution NYI';
     my @a = (1, { a => 2, b => 3 }, 4);
     my @r = hyper 'prefix:-', \@a;
     is scalar @r, 3, 'hash in array - result array is the correct length';
