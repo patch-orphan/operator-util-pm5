@@ -21,7 +21,6 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
     # binary infix
-    'infix:->'  => sub { my $m = $_[1]; $_[0]->$m },
     'infix:**'  => sub { $_[0] **  $_[1] },
     'infix:=~'  => sub { $_[0] =~  $_[1] },
     'infix:!~'  => sub { $_[0] !~  $_[1] },
@@ -55,11 +54,29 @@ my %ops = (
     'infix:||'  => sub { $_[0] ||  $_[1] },
     'infix:..'  => sub { $_[0] ..  $_[1] },
     'infix:...' => sub { $_[0] ... $_[1] },
+    'infix:='   => sub { $_[0] =   $_[1] },
+    'infix:**=' => sub { $_[0] **= $_[1] },
+    'infix:*='  => sub { $_[0] *=  $_[1] },
+    'infix:/='  => sub { $_[0] /=  $_[1] },
+    'infix:%='  => sub { $_[0] %=  $_[1] },
+    'infix:x='  => sub { $_[0] x=  $_[1] },
+    'infix:+='  => sub { $_[0] +=  $_[1] },
+    'infix:-='  => sub { $_[0] -=  $_[1] },
+    'infix:.='  => sub { $_[0] .=  $_[1] },
+    'infix:<<=' => sub { $_[0] <<= $_[1] },
+    'infix:>>=' => sub { $_[0] >>= $_[1] },
+    'infix:&='  => sub { $_[0] &=  $_[1] },
+    'infix:|='  => sub { $_[0] |=  $_[1] },
+    'infix:^='  => sub { $_[0] ^=  $_[1] },
+    'infix:&&=' => sub { $_[0] &&= $_[1] },
+    'infix:||=' => sub { $_[0] ||= $_[1] },
     'infix:,'   => sub { $_[0] ,   $_[1] },
     'infix:=>'  => sub { $_[0] =>  $_[1] },
     'infix:and' => sub { $_[0] and $_[1] },
     'infix:or'  => sub { $_[0] or  $_[1] },
     'infix:xor' => sub { $_[0] xor $_[1] },
+    'infix:->'  => sub { my $m = $_[1];         $_[0]->$m },
+    'infix:->=' => sub { my $m = $_[1]; $_[0] = $_[0]->$m },
 
     # unary prefix
     'prefix:++' => sub { ++$_[0]  },
