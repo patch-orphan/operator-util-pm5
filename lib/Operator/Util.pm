@@ -261,12 +261,13 @@ sub hyper {
 sub applyop {
     my ($op) = @_;
     my $type;
-
     ($op, $type) = _get_op_info($op);
 
     return unless $op;
-    return $ops{$op}->( @_[1, 2] ) if $type eq 'infix';
-    return $ops{$op}->( $_[1]   );
+    return $ops{$op}->( @_[1, 2] )
+        if $type eq 'infix'
+        || $type eq 'postcircumfix';
+    return $ops{$op}->( $_[1] );
 }
 
 sub reverseop {

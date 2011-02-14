@@ -168,7 +168,7 @@ TODO: {
     my $full = join '', hyper 'postcircumfix:{}', \@array, 'key', dwim_right=>1;
     is $full, 'valvalval', 'hyper-dereference an array';
 
-    my $part = join '', hyper 'postcircumfix:{}', \@array[0,1], 'key', dwim_right=>1;
+    my $part = join '', hyper 'postcircumfix:{}', [@array[0,1]], 'key', dwim_right=>1;
     is $part, 'valval', 'hyper-dereference an array slice';
 }
 
