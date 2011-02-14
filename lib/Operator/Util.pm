@@ -244,7 +244,9 @@ sub hyper {
     }
 
     for my $i (0 .. $length - 1) {
-        push @results, applyop($op, $lhs->[$i], $rhs->[$i]);
+        my $li = $i <= $#{$lhs} ? $i : $#{$lhs};
+        my $ri = $i <= $#{$rhs} ? $i : $#{$rhs};
+        push @results, applyop($op, $lhs->[$li], $rhs->[$ri]);
     }
 
     return @results;
