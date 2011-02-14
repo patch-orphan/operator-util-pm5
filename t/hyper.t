@@ -57,39 +57,39 @@ my @e;
     @e = qw<1A 2B 3C 4D>;
     is_deeply \@r, \@e, "list-level element truncate on rhs";
 
-    @r = '.', [1,2,3,4,5], [qw<A B C D>], dwim_left=>1;
+    @r = hyper '.', [1,2,3,4,5], [qw<A B C D>], dwim_left=>1;
     @e =  qw<1A 2B 3C 4D>;
     is_deeply \@r, \@e, "list-level element truncate on lhs";
 
-    @r = '.', [1,2,3,4], [qw<A B C>], dwim_right=>1; 
+    @r = hyper '.', [1,2,3,4], [qw<A B C>], dwim_right=>1; 
     @e = qw<1A 2B 3C 4A>;
     is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = '.', [1,2,3], [qw<A B C D>], dwim_left=>1;
+    @r = hyper '.', [1,2,3], [qw<A B C D>], dwim_left=>1;
     @e =  qw<1A 2B 3C 1D>;
     is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = '.', [1,2,3,4], [qw<A B>], dwim_right=>1;
+    @r = hyper '.', [1,2,3,4], [qw<A B>], dwim_right=>1;
     @e = qw<1A 2B 3A 4B>;
     is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = '.', [1,2], [qw<A B C D>], dwim_left=>1;
+    @r = hyper '.', [1,2], [qw<A B C D>], dwim_left=>1;
     @e =  qw<1A 2B 1C 2D>;
     is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = '.', [1,2,3,4], ['A'], dwim_right=>1;
+    @r = hyper '.', [1,2,3,4], ['A'], dwim_right=>1;
     @e = qw<1A 2A 3A 4A>;
     is_deeply \@r, \@e, "list-level element extension on rhs";
 
-    @r = '.', [1,], [qw<A B C D>], dwim_left=>1;
+    @r = hyper '.', [1,], [qw<A B C D>], dwim_left=>1;
     @e = qw<1A 1B 1C 1D>;
     is_deeply \@r, \@e, "list-level element extension on lhs";
 
-    @r = '.', [1,2,3,4], 'A', dwim_right=>1;
+    @r = hyper '.', [1,2,3,4], 'A', dwim_right=>1;
     @e = qw<1A 2A 3A 4A>;
     is_deeply \@r, \@e, "scalar element extension on rhs";
 
-    @r = '.', 1, [qw<A B C D>], dwim_left=>1;
+    @r = hyper '.', 1, [qw<A B C D>], dwim_left=>1;
     @e = qw<1A 1B 1C 1D>;
     is_deeply \@r, \@e, "scalar element extension on lhs";
 };
