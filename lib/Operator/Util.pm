@@ -243,10 +243,16 @@ sub hyper {
         $length = @$lhs > @$rhs ? @$lhs : @$rhs;
     }
 
-    for my $i (0 .. $length - 1) {
-        my $li = $i <= $#{$lhs} ? $i : $#{$lhs};
-        my $ri = $i <= $#{$rhs} ? $i : $#{$rhs};
-        push @results, applyop($op, $lhs->[$li], $rhs->[$ri]);
+    my $lhs_index = 0;
+    my $rhs_index = 0;
+    for (1 .. $length) {
+        $lhs_index = 0 if $dwim_left  && $lhs_index > $#{$lhs};
+        $rhs_index = 0 if $dwim_right && $rhs_index > $#{$rhs};
+        push @results, applyop($op, $lhs->[$lhs_index], $rhs->[$rhs_index]);
+    }
+    continue {
+        $lhs_index++;
+        $rhs_index++;
     }
 
     return @results;
