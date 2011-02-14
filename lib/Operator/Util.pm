@@ -322,7 +322,7 @@ This is an early release of Operator::Util.  The interface and functionality
 may change in the future based on user feedback.  Please make suggestions by
 creating an issue at L<http://github.com/patch/operator-util-pm5/issues>.
 
-The documentation is in the process of being thouroughly expanded.
+The documentation is in the process of being thoroughly expanded.
 
 =head1 DESCRIPTION
 
@@ -374,8 +374,8 @@ C<hyperwith> is an alias for C<reduce>.
 =item applyop OPSTRING, OPERAND
 
 If three arguments are provided to C<applyop>, apply the binary operator
-OPSTRING to the aperands OPERAND1 and OPERAND2.  If two arguments are
-provided, apply the unary operator OPSTRING to the aperand OPERAND.  The unary
+OPSTRING to the operands OPERAND1 and OPERAND2.  If two arguments are
+provided, apply the unary operator OPSTRING to the operand OPERAND.  The unary
 form defaults to using prefix operators, so 'prefix:' may be omitted, e.g.,
 C<'++'> instead of C<'prefix:++'>;
 
@@ -431,14 +431,14 @@ operator string?
 
 =item * L<perlop>
 
-=item * L<List::MoreUtils/pairwise> is simular to C<zip> except that its first
+=item * L<List::MoreUtils/pairwise> is similar to C<zip> except that its first
 argument is a block instead of an operator string and the remaining arguments
 are arrays instead of array refs:
 
     pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
     zip '+', \@array1, \@array2             # Operator::Util
 
-=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is simular to C<zip> when using
+=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is similar to C<zip> when using
 the default operator C<','> except that the arguments are arrays instead of
 array refs:
 

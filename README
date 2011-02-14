@@ -20,7 +20,7 @@ WARNING
     make suggestions by creating an issue at
     <http://github.com/patch/operator-util-pm5/issues>.
 
-    The documentation is in the process of being thouroughly expanded.
+    The documentation is in the process of being thoroughly expanded.
 
 DESCRIPTION
     A pragmatic approach at providing the functionality of many of Perl 6's
@@ -60,9 +60,9 @@ DESCRIPTION
     applyop OPSTRING, OPERAND1, OPERAND2
     applyop OPSTRING, OPERAND
         If three arguments are provided to "applyop", apply the binary
-        operator OPSTRING to the aperands OPERAND1 and OPERAND2. If two
+        operator OPSTRING to the operands OPERAND1 and OPERAND2. If two
         arguments are provided, apply the unary operator OPSTRING to the
-        aperand OPERAND. The unary form defaults to using prefix operators,
+        operand OPERAND. The unary form defaults to using prefix operators,
         so 'prefix:' may be omitted, e.g., '++' instead of 'prefix:++';
 
             applyop '.', 'foo', 'bar'  # foobar
@@ -106,14 +106,14 @@ TODO
 SEE ALSO
     *   perlop
 
-    *   "pairwise" in List::MoreUtils is simular to "zip" except that its
+    *   "pairwise" in List::MoreUtils is similar to "zip" except that its
         first argument is a block instead of an operator string and the
         remaining arguments are arrays instead of array refs:
 
             pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
             zip '+', \@array1, \@array2             # Operator::Util
 
-    *   "mesh" a.k.a. "zip" in List::MoreUtils is simular to "zip" when
+    *   "mesh" a.k.a. "zip" in List::MoreUtils is similar to "zip" when
         using the default operator ',' except that the arguments are arrays
         instead of array refs:
 
