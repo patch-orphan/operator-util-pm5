@@ -20,7 +20,7 @@ my @e;
 
     @r = hyper 'x', [1,2,3], [3,2,1];
     @e = (111,22,3);
-    is_deeply \@r, \@e, 'hyper(x) two arrays');
+    is_deeply \@r, \@e, 'hyper(x) two arrays';
 
     @r = hyper '/', [20,40,60], [2,5,10];
     @e = (10,8,6);
@@ -165,258 +165,262 @@ my @e;
     );
 
     my $full = join '', hyper 'postcircumfix:{}', \@array, 'key', dwim_right=>1;
-    is($full, 'valvalval', 'hyper-dereference an array');
+    is $full, 'valvalval', 'hyper-dereference an array';
 
-    my $part = join '', eval '@array[0,1]>>.<key>';
-    is($part, 'valval', 'hyper-dereference an array slice');
+    my $part = join '', hyper 'postcircumfix:{}', \@array[0,1], 'key', dwim_right=>1;
+    is $part, 'valval', 'hyper-dereference an array slice';
 }
 
 # test hypers on hashes
 {
-    my %a = a => 1, b => 2, c => 3;
-    my %b = a => 5, b => 6, c => 7;
-    my %c = a => 1, b => 2;
-    my %d = a => 5, b => 6;
+    my %a = (a => 1, b => 2, c => 3);
+    my %b = (a => 5, b => 6, c => 7);
+    my %c = (a => 1, b => 2);
+    my %d = (a => 5, b => 6);
 
     my %r;
-    %r = %a >>+<< %b;
-    is +%r,   3,  'hash - >>+<< result has right number of keys (same keys)';
-    is %r<a>, 6,  'hash - correct result form >>+<< (same keys)';
-    is %r<b>, 8,  'hash - correct result form >>+<< (same keys)';
-    is %r<c>, 10, 'hash - correct result form >>+<< (same keys)';
+    %r = hyper '+', \%a, \%b;
+    is scalar keys %r, 3, 'hash - >>+<< result has right number of keys (same keys)';
+    is $r{a},          6, 'hash - correct result form >>+<< (same keys)';
+    is $r{b},          8, 'hash - correct result form >>+<< (same keys)';
+    is $r{c},         10, 'hash - correct result form >>+<< (same keys)';
 
-    %r = %a »+« %d;
-    is +%r,   3, 'hash - »+« result has right number of keys (union test)';
-    is %r<a>, 6, 'hash - correct result form »+« (union test)';
-    is %r<b>, 8, 'hash - correct result form »+« (union test)';
-    is %r<c>, 3, 'hash - correct result form »+« (union test)';
+    %r = hyper '+', \%a, \%d;
+    is scalar keys %r, 3, 'hash - »+« result has right number of keys (union test)';
+    is $r{a},          6, 'hash - correct result form »+« (union test)';
+    is $r{b},          8, 'hash - correct result form »+« (union test)';
+    is $r{c},          3, 'hash - correct result form »+« (union test)';
 
-    %r = %c >>+<< %b;
-    is +%r,   3, 'hash - >>+<< result has right number of keys (union test)';
-    is %r<a>, 6, 'hash - correct result form >>+<< (union test)';
-    is %r<b>, 8, 'hash - correct result form >>+<< (union test)';
-    is %r<c>, 7, 'hash - correct result form >>+<< (union test)';
+    %r = hyper '+', \%c, \%b;
+    is scalar keys %r, 3, 'hash - >>+<< result has right number of keys (union test)';
+    is $r{a},          6, 'hash - correct result form >>+<< (union test)';
+    is $r{b},          8, 'hash - correct result form >>+<< (union test)';
+    is $r{c},          7, 'hash - correct result form >>+<< (union test)';
 
-    %r = %a <<+>> %b;
-    is +%r,   3,  'hash - <<+>> result has right number of keys (same keys)';
-    is %r<a>, 6,  'hash - correct result form <<+>> (same keys)';
-    is %r<b>, 8,  'hash - correct result form <<+>> (same keys)';
-    is %r<c>, 10, 'hash - correct result form <<+>> (same keys)';
+    %r = hyper '+', \%a, \%b, dwim=>1;
+    is scalar keys %r, 3, 'hash - <<+>> result has right number of keys (same keys)';
+    is $r{a},          6, 'hash - correct result form <<+>> (same scalar keys)';
+    is $r{b},          8, 'hash - correct result form <<+>> (same scalar keys)';
+    is $r{c},         10, 'hash - correct result form <<+>> (same scalar keys)';
 
-    %r = %a <<+>> %d;
-    is +%r,   2, 'hash - <<+>> result has right number of keys (intersection test)';
-    is %r<a>, 6, 'hash - correct result form <<+>> (intersection test)';
-    is %r<b>, 8, 'hash - correct result form <<+>> (intersection test)';
+    %r = hyper '+', \%a, \%d, dwim=>1;
+    is scalar keys %r, 2, 'hash - <<+>> result has right number of keys (intersection test)';
+    is $r{a},          6, 'hash - correct result form <<scalar keys >> (intersection test)';
+    is $r{b},          8, 'hash - correct result form <<scalar keys >> (intersection test)';
 
-    %r = %c <<+>> %b;
-    is +%r,   2, 'hash - <<+>> result has right number of keys (intersection test)';
-    is %r<a>, 6, 'hash - correct result form <<+>> (intersection test)';
-    is %r<b>, 8, 'hash - correct result form <<+>> (intersection test)';
+    %r = hyper '+', \%c, \%b, dwim=>1;
+    is scalar keys %r, 2, 'hash - <<+>> result has right number of keys (intersection test)';
+    is $r{a},          6, 'hash - correct result form <<scalar keys >> (intersection test)';
+    is $r{b},          8, 'hash - correct result form <<scalar keys >> (intersection test)';
 
-    %r = %a >>+>> %c;
-    is +%r,   3, 'hash - >>+>> result has right number of keys';
-    is %r<a>, 2, 'hash - correct result from >>+>>';
-    is %r<b>, 4, 'hash - correct result from >>+>>';
-    is %r<c>, 3, 'hash - correct result from >>+>>';
+    %r = hyper '+', \%a, \%c, dwim_right=>1;
+    is scalar keys %r, 3, 'hash - >>+>> result has right number of keys';
+    is $r{a},           2, 'hash - correct result from >>scalar keys >>';
+    is $r{b},           4, 'hash - correct result from >>scalar keys >>';
+    is $r{c},           3, 'hash - correct result from >>scalar keys >>';
 
-    %r = %c >>+>> %b;
-    is +%r,   2, 'hash - >>+>> result has right number of keys';
-    is %r<a>, 6, 'hash - correct result from >>+>>';
-    is %r<b>, 8, 'hash - correct result from >>+>>';
+    %r = hyper '+', \%c, \%b, dwim_right=>1;
+    is scalar keys %r, 2, 'hash - >>+>> result has right number of keys';
+    is $r{a},           6, 'hash - correct result from >>scalar keys >>';
+    is $r{b},           8, 'hash - correct result from >>scalar keys >>';
 
-    %r = %c <<+<< %a;
-    is +%r,   3, 'hash - <<+<< result has right number of keys';
-    is %r<a>, 2, 'hash - correct result from <<+<<';
-    is %r<b>, 4, 'hash - correct result from <<+<<';
-    is %r<c>, 3, 'hash - correct result from <<+<<';
+    %r = hyper '+', \%c, \%a, dwim_left=>1;
+    is scalar keys %r, 3, 'hash - <<+<< result has right number of keys';
+    is $r{a},           2, 'hash - correct result from <<scalar keys <<';
+    is $r{b},           4, 'hash - correct result from <<scalar keys <<';
+    is $r{c},           3, 'hash - correct result from <<scalar keys <<';
 
-    %r = %b <<+<< %c;
-    is +%r,   2, 'hash - <<+<< result has right number of keys';
-    is %r<a>, 6, 'hash - correct result from <<+<<';
-    is %r<b>, 8, 'hash - correct result from <<+<<';
+    %r = hyper '+', \%b, \%c, dwim_left=>1;
+    is scalar keys %r, 2, 'hash - <<+<< result has right number of keys';
+    is $r{a},          6, 'hash - correct result from <<scalar keys <<';
+    is $r{b},          8, 'hash - correct result from <<scalar keys <<';
 }
 
 {
-    my %a = a => 1, b => 2, c => 3;
-    my %r = -<<%a;
-    is +%r,   3, 'hash - -<< result has right number of keys';
-    is %r<a>, -1, 'hash - correct result from -<<';
-    is %r<b>, -2, 'hash - correct result from -<<';
-    is %r<c>, -3, 'hash - correct result from -<<';
+    my %a = (a => 1, b => 2, c => 3);
+    my %r = hyper 'prefix:-', \%a;
+    is scalar keys %r, 3, 'hash - -<< result has right number of keys';
+    is $r{a},         -1, 'hash - correct result from -<<';
+    is $r{b},         -2, 'hash - correct result from -<<';
+    is $r{c},         -3, 'hash - correct result from -<<';
 
-    %r = --<<%a;
-    is +%r,   3, 'hash - --<< result has right number of keys';
-    is %r<a>, 0, 'hash - correct result from --<<';
-    is %r<b>, 1, 'hash - correct result from --<<';
-    is %r<c>, 2, 'hash - correct result from --<<';
-    is +%a,   3, 'hash - --<< result has right number of keys';
-    is %a<a>, 0, 'hash - correct result from --<<';
-    is %a<b>, 1, 'hash - correct result from --<<';
-    is %a<c>, 2, 'hash - correct result from --<<';
+    %r = hyper 'prefix:--', \%a;
+    is scalar keys %r, 3, 'hash - --<< result has right number of keys';
+    is $r{a},          0, 'hash - correct result from --<<';
+    is $r{b},          1, 'hash - correct result from --<<';
+    is $r{c},          2, 'hash - correct result from --<<';
+    is scalar keys %a, 3, 'hash - --<< result has right number of keys';
+    is $a{a},          0, 'hash - correct result from --<<';
+    is $a{b},          1, 'hash - correct result from --<<';
+    is $a{c},          2, 'hash - correct result from --<<';
 
-    %r = %a>>++;
-    is +%r,   3, 'hash - >>++ result has right number of keys';
-    is %r<a>, 0, 'hash - correct result from >>++';
-    is %r<b>, 1, 'hash - correct result from >>++';
-    is %r<c>, 2, 'hash - correct result from >>++';
-    is +%a,   3, 'hash - >>++ result has right number of keys';
-    is %a<a>, 1, 'hash - correct result from >>++';
-    is %a<b>, 2, 'hash - correct result from >>++';
-    is %a<c>, 3, 'hash - correct result from >>++';
+    %r = hyper 'postfix:++', \%a;
+    is scalar keys %r, 3, 'hash - >>++ result has right number of keys';
+    is $r{a},          0, 'hash - correct result from >>++';
+    is $r{b},          1, 'hash - correct result from >>++';
+    is $r{c},          2, 'hash - correct result from >>++';
+    is scalar keys %a, 3, 'hash - >>++ result has right number of keys';
+    is $a{a},          1, 'hash - correct result from >>++';
+    is $a{b},          2, 'hash - correct result from >>++';
+    is $a{c},          3, 'hash - correct result from >>++';
 }
 
 {
-    my %a = a => 1, b => 2, c => 3;
+    my %a = (a => 1, b => 2, c => 3);
 
-    my %r = %a >>*>> 4;
-    is +%r,   3, 'hash - >>*>> result has right number of keys';
-    is %r<a>, 4, 'hash - correct result from >>*>>';
-    is %r<b>, 8, 'hash - correct result from >>*>>';
-    is %r<c>, 12, 'hash - correct result from >>*>>';
+    my %r = hyper '*', \%a, 4, dwim_right=>1;
+    is scalar keys %r, 3, 'hash - >>*>> result has right number of keys';
+    is $r{a},          4, 'hash - correct result from >>*>>';
+    is $r{b},          8, 'hash - correct result from >>*>>';
+    is $r{c},         12, 'hash - correct result from >>*>>';
 
-    %r = 2 <<**<< %a ;
-    is +%r,   3, 'hash - <<**<< result has right number of keys';
-    is %r<a>, 2, 'hash - correct result from <<**<<';
-    is %r<b>, 4, 'hash - correct result from <<**<<';
-    is %r<c>, 8, 'hash - correct result from <<**<<';
+    %r = hyper '**', 2, \%a, dwim_left=>1;
+    is scalar keys %r, 3, 'hash - <<**<< result has right number of keys';
+    is $r{a},          2, 'hash - correct result from <<**<<';
+    is $r{b},          4, 'hash - correct result from <<**<<';
+    is $r{c},          8, 'hash - correct result from <<**<<';
 
-    %r = %a <<*>> 4;
-    is +%r,   3, 'hash - <<*>> result has right number of keys';
-    is %r<a>, 4, 'hash - correct result from <<*>>';
-    is %r<b>, 8, 'hash - correct result from <<*>>';
-    is %r<c>, 12, 'hash - correct result from <<*>>';
+    %r = hyper '*', \%a, 4, dwim=>1;
+    is scalar keys %r, 3, 'hash - <<*>> result has right number of keys';
+    is $r{a},          4, 'hash - correct result from <<*>>';
+    is $r{b},          8, 'hash - correct result from <<*>>';
+    is $r{c},         12, 'hash - correct result from <<*>>';
 
-    %r = 2 <<**>> %a ;
-    is +%r,   3, 'hash - <<**>> result has right number of keys';
-    is %r<a>, 2, 'hash - correct result from <<**>>';
-    is %r<b>, 4, 'hash - correct result from <<**>>';
-    is %r<c>, 8, 'hash - correct result from <<**>>';
+    %r = hyper '**', 2, \%a, dwim=>1;
+    is scalar keys %r, 3, 'hash - <<**>> result has right number of keys';
+    is $r{a},          2, 'hash - correct result from <<**>>';
+    is $r{b},          4, 'hash - correct result from <<**>>';
+    is $r{c},          8, 'hash - correct result from <<**>>';
 }
 
-{
-    my %a = a => 1, b => -2, c => 3;
-    my %r = %a>>.abs;
-    is +%r,   3, 'hash - >>.abs result has right number of keys';
-    is %r<a>, 1, 'hash - correct result from >>.abs';
-    is %r<b>, 2, 'hash - correct result from >>.abs';
-    is %r<c>, 3, 'hash - correct result from >>.abs';
+TODO: {
+    local $TODO = 'need an object to test';
+    my %a = (a => 1, b => -2, c => 3);
+    my %r = hyper '->', \%a, 'abs', dwim_right=>1;
+    is scalar keys %r, 3, 'hash - >>.abs result has right number of keys';
+    is $r{a},          1, 'hash - correct result from >>.abs';
+    is $r{b},          2, 'hash - correct result from >>.abs';
+    is $r{c},          3, 'hash - correct result from >>.abs';
 }
 
 {
     my @a = (1, { a => 2, b => 3 }, 4);
-    my @b = <a b c>;
+    my @b = qw<a b c>;
     my @c = ('z', { a => 'y', b => 'x' }, 'w');
     my @d = 'a'..'f';
 
-    my @r = @a <<~>> @b;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from <<~>>';
-    is @r[1]<a>, "2b", 'hash in array - correct result from <<~>>';
-    is @r[1]<b>, "3b", 'hash in array - correct result from <<~>>';
-    is @r[2], "4c", 'hash in array - correct result from <<~>>';
+    my @r = hyper '.', \@a, \@b, dwim=>1;
+    is scalar @r,   3, 'hash in array - result array is the correct length';
+    is $r[0],    "1a", 'hash in array - correct result from <<~>>';
+    is $r[1]{a}, "2b", 'hash in array - correct result from <<~>>';
+    is $r[1]{b}, "3b", 'hash in array - correct result from <<~>>';
+    is $r[2],    "4c", 'hash in array - correct result from <<~>>';
 
-    @r = @a >>~<< @c;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1z", 'hash in array - correct result from >>~<<';
-    is @r[1]<a>, "2y", 'hash in array - correct result from >>~<<';
-    is @r[1]<b>, "3x", 'hash in array - correct result from >>~<<';
-    is @r[2], "4w", 'hash in array - correct result from >>~<<';
+    @r = hyper '.', \@a, \@c;
+    is scalar @r,   3, 'hash in array - result array is the correct length';
+    is $r[0],    "1z", 'hash in array - correct result from >>~<<';
+    is $r[1]{a}, "2y", 'hash in array - correct result from >>~<<';
+    is $r[1]{b}, "3x", 'hash in array - correct result from >>~<<';
+    is $r[2],    "4w", 'hash in array - correct result from >>~<<';
 
-    @r = @a >>~>> @d;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from >>~>>';
-    is @r[1]<a>, "2b", 'hash in array - correct result from >>~>>';
-    is @r[1]<b>, "3b", 'hash in array - correct result from >>~>>';
-    is @r[2], "4c", 'hash in array - correct result from >>~>>';
+    @r = hyper '.', \@a, \@d, dwim_right=>1;
+    is scalar @r,   3, 'hash in array - result array is the correct length';
+    is $r[0],    "1a", 'hash in array - correct result from >>~>>';
+    is $r[1]{a}, "2b", 'hash in array - correct result from >>~>>';
+    is $r[1]{b}, "3b", 'hash in array - correct result from >>~>>';
+    is $r[2],    "4c", 'hash in array - correct result from >>~>>';
 
-    @r = @d <<R~<< @a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from <<R~<<';
-    is @r[1]<a>, "2b", 'hash in array - correct result from <<R~<<';
-    is @r[1]<b>, "3b", 'hash in array - correct result from <<R~<<';
-    is @r[2], "4c", 'hash in array - correct result from <<R~<<';
+    TODO: {
+        local $TODO = 'R meta-operator NYI';
+        @r = hyper 'R.', \@d, \@a, dwim_left=>1;
+        is scalar @r,   3, 'hash in array - result array is the correct length';
+        is $r[0],    "1a", 'hash in array - correct result from <<R~<<';
+        is $r[1]{a}, "2b", 'hash in array - correct result from <<R~<<';
+        is $r[1]{b}, "3b", 'hash in array - correct result from <<R~<<';
+        is $r[2],    "4c", 'hash in array - correct result from <<R~<<';
+    }
 
-    @r = @a <<~>> @d;
-    is +@r, 6, 'hash in array - result array is the correct length';
-    is @r[0], "1a", 'hash in array - correct result from <<~>>';
-    is @r[1]<a>, "2b", 'hash in array - correct result from <<~>>';
-    is @r[1]<b>, "3b", 'hash in array - correct result from <<~>>';
-    is @r[2], "4c", 'hash in array - correct result from <<~>>';
-    is @r[3], "1d", 'hash in array - correct result from <<~>>';
-    is @r[4]<a>, "2e", 'hash in array - correct result from <<~>>';
-    is @r[4]<b>, "3e", 'hash in array - correct result from <<~>>';
-    is @r[5], "4f", 'hash in array - correct result from <<~>>';
+    @r = hyper '.', \@a, \@d, dwim=>1;
+    is scalar @r,   6, 'hash in array - result array is the correct length';
+    is $r[0],    "1a", 'hash in array - correct result from <<~>>';
+    is $r[1]{a}, "2b", 'hash in array - correct result from <<~>>';
+    is $r[1]{b}, "3b", 'hash in array - correct result from <<~>>';
+    is $r[2],    "4c", 'hash in array - correct result from <<~>>';
+    is $r[3],    "1d", 'hash in array - correct result from <<~>>';
+    is $r[4]{a}, "2e", 'hash in array - correct result from <<~>>';
+    is $r[4]{b}, "3e", 'hash in array - correct result from <<~>>';
+    is $r[5],    "4f", 'hash in array - correct result from <<~>>';
 }
 
 {
     my @a = (1, { a => 2, b => 3 }, 4);
-    my @r = -<<@a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], -1, 'hash in array - correct result from -<<';
-    is @r[1]<a>, -2, 'hash in array - correct result from -<<';
-    is @r[1]<b>, -3, 'hash in array - correct result from -<<';
-    is @r[2], -4, 'hash in array - correct result from -<<';
+    my @r = hyper 'prefix:-', \@a;
+    is scalar @r, 3, 'hash in array - result array is the correct length';
+    is $r[0],    -1, 'hash in array - correct result from -<<';
+    is $r[1]{a}, -2, 'hash in array - correct result from -<<';
+    is $r[1]{b}, -3, 'hash in array - correct result from -<<';
+    is $r[2],    -4, 'hash in array - correct result from -<<';
 
-    @r = ++<<@a;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], 2, 'hash in array - correct result from ++<<';
-    is @r[1]<a>, 3, 'hash in array - correct result from ++<<';
-    is @r[1]<b>, 4, 'hash in array - correct result from ++<<';
-    is @r[2], 5, 'hash in array - correct result from ++<<';
+    @r = hyper 'prefix:++', \@a;
+    is scalar @r, 3, 'hash in array - result array is the correct length';
+    is $r[0],     2, 'hash in array - correct result from ++<<';
+    is $r[1]{a},  3, 'hash in array - correct result from ++<<';
+    is $r[1]{b},  4, 'hash in array - correct result from ++<<';
+    is $r[2],     5, 'hash in array - correct result from ++<<';
 
-    @r = @a>>--;
-    is +@r, 3, 'hash in array - result array is the correct length';
-    is @r[0], 2, 'hash in array - correct result from ++<<';
-    is @r[1]<a>, 3, 'hash in array - correct result from ++<<';
-    is @r[1]<b>, 4, 'hash in array - correct result from ++<<';
-    is @r[2], 5, 'hash in array - correct result from ++<<';
-    is +@a, 3, 'hash in array - result array is the correct length';
-    is @a[0], 1, 'hash in array - correct result from ++<<';
-    is @a[1]<a>, 2, 'hash in array - correct result from ++<<';
-    is @a[1]<b>, 3, 'hash in array - correct result from ++<<';
-    is @a[2], 4, 'hash in array - correct result from ++<<';
+    @r = hyper 'postfix:--', \@a;
+    is scalar @r, 3, 'hash in array - result array is the correct length';
+    is $r[0],     2, 'hash in array - correct result from ++<<';
+    is $r[1]{a},  3, 'hash in array - correct result from ++<<';
+    is $r[1]{b},  4, 'hash in array - correct result from ++<<';
+    is $r[2],     5, 'hash in array - correct result from ++<<';
+    is scalar @a, 3, 'hash in array - result array is the correct length';
+    is $a[0],     1, 'hash in array - correct result from ++<<';
+    is $a[1]{a},  2, 'hash in array - correct result from ++<<';
+    is $a[1]{b},  3, 'hash in array - correct result from ++<<';
+    is $a[2],     4, 'hash in array - correct result from ++<<';
 }
 
 # Test for 'my @a = <a b c> »~» "z";' wrongly
 # setting @a to [['az', 'bz', 'cz']].
 {
-    my @a = <a b c> »~» 'z';
-    is "{@a[0]}, {@a[1]}, {@a[2]}", 'az, bz, cz', "dwimmy hyper doesn't return an itemized list";
+    my @a = hyper '.', [qw<a b c>], 'z', dwim_right=>1;
+    is "$a[0], $a[1], $a[2]", 'az, bz, cz', "dwimmy hyper doesn't return an itemized list";
 }
 
 {
-    is ~(-<<(1..3)), '-1 -2 -3', 'ranges and hyper ops mix';
+    is_deeply [hyper 'prefix:-', [1..3]], [-1,-2,-3], 'ranges and hyper ops mix';
 }
 
 # Parsing hyper-subtraction
 {
-    is ((9, 8) <<-<< (1, 2, 3, 4)), (8, 6, 6, 4), '<<-<<';
-    is ((9, 8, 10, 12) >>->> (1, 2)), (8, 6, 9, 10), '>>->>';
-    is ((9, 8) >>-<< (1, 2)), (8, 6), '>>-<<';
-    is ((9, 8) <<->> (1, 2, 5)), (8, 6, 4), '<<->>';
+    is_deeply [hyper '-', [9,8],       [1,2,3,4], dwim_left =>1], [8,6,6,4],  '<<-<<';
+    is_deeply [hyper '-', [9,8,10,12], [1,2],     dwim_right=>1], [8,6,9,10], '>>->>';
+    is_deeply [hyper '-', [9,8],       [1,2]                   ], [8,6],      '>>-<<';
+    is_deeply [hyper '-', [9,8],       [1,2,5],   dwim=>1      ], [8,6,4],    '<<->>';
 }
 
 # @array »+=»
 # Hyper assignment operators
 {
-    my @array = 3, 8, 2, 9, 3, 8;
-    @r = @array »+=« (1, 2, 3, 4, 5, 6);
-    @e = 4, 10, 5, 13, 8, 14;
-    is @r, @e, '»+=« returns the right value';
-    is @array, @e, '»+=« changes its lvalue';
+    my @array = (3, 8, 2, 9, 3, 8);
+    @r = hyper '+=', \@array, [1, 2, 3, 4, 5, 6];
+    @e = (4, 10, 5, 13, 8, 14);
+    is_deeply \@r,     \@e, '»+=« returns the right value';
+    is_deeply \@array, \@e, '»+=« changes its lvalue';
 
     @array = 3, 8, 2, 9, 3, 8;
-    @r = @array »*=» (1, 2, 3);
-    @e = 3, 16, 6, 9, 6, 24;
-    is @r, @e, '»*=» returns the right value';
-    is @array, @e, '»*=» changes its lvalue';
+    @r = hyper '*=', \@array, [1, 2, 3], dwim_right=>1;
+    @e = (3, 16, 6, 9, 6, 24);
+    is_deeply \@r,     \@e, '»*=» returns the right value';
+    is_deeply \@array, \@e, '»*=» changes its lvalue';
 
     my $a = 'apple';
     my $b = 'blueberry';
     my $c = 'cherry';
-    @r = ($a, $b, $c) »~=» <pie tart>;
-    @e = <applepie blueberrytart cherrypie>;
-    is @r, @e, '»~=» with list of scalars on the left returns the right value';
+    @r = hyper '.=', [$a, $b, $c], [qw<pie tart>], dwim_right=>1;
+    @e = qw<applepie blueberrytart cherrypie>;
+    is_deeply \@r, \@e, '»~=» with list of scalars on the left returns the right value';
     my $e = 'applepie, blueberrytart, cherrypie';
     is "$a, $b, $c", $e, '»~=» changes each scalar';
 }
