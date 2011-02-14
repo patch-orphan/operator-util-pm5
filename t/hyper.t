@@ -300,7 +300,7 @@ TODO: {
 TODO: {
     local $TODO = 'hyper hash NYI and need an object to test';
     my %a = (a => 1, b => -2, c => 3);
-    my %r = hyper '->', \%a, 'abs', dwim_right=>1;
+    my %r = eval { hyper '->', \%a, 'abs', dwim_right=>1 };
     is scalar keys %r, 3, 'hash - >>.abs result has right number of keys';
     is $r{a},          1, 'hash - correct result from >>.abs';
     is $r{b},          2, 'hash - correct result from >>.abs';
