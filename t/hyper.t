@@ -238,8 +238,7 @@ TODO: {
     is $r{b},          8, 'hash - correct result from <<scalar keys <<';
 }
 
-TODO: {
-    local $TODO = 'hyper hash NYI';
+{
     my %a = (a => 1, b => 2, c => 3);
     my %r = hyper 'prefix:-', \%a;
     is scalar keys %r, 3, 'hash - -<< result has right number of keys';
@@ -358,7 +357,7 @@ TODO: {
 }
 
 TODO: {
-    local $TODO = 'hyper hash and hyper distribution NYI';
+    local $TODO = 'hyper distribution NYI';
     my @a = (1, { a => 2, b => 3 }, 4);
     my @r = hyper 'prefix:-', \@a;
     is scalar @r, 3, 'hash in array - result array is the correct length';
