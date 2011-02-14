@@ -207,6 +207,17 @@ sub cross {
 
 sub hyper {
     my ($op, $lhs, $rhs, %args) = @_;
+
+    if (@_ == 2) {
+        return map { applyop($op, $_) } @$lhs
+            if ref $lhs eq 'ARRAY';
+        return map { $_ => applyop($op, $lhs->{$_}) } keys %$lhs
+            if ref $lhs eq 'HASH';
+        return applyop($op, $$lhs)
+            if ref $lhs eq 'SCALAR';
+        return applyop($op, $lhs);
+    }
+
     my $dwim_left  = $args{dwim_left}  || $args{dwim};
     my $dwim_right = $args{dwim_right} || $args{dwim};
     my ($length, @results);
@@ -240,21 +251,21 @@ sub hyper {
 }
 
 sub applyop {
-    my ($op, $a, $b) = @_;
+    my ($op) = @_;
     my $type;
 
     ($op, $type) = _get_op_info($op);
 
     return unless $op;
-    return $ops{$op}->($a, $b) if $type eq 'infix';
-    return $ops{$op}->($a);
+    return $ops{$op}->( @_[1, 2] ) if $type eq 'infix';
+    return $ops{$op}->( $_[1]   );
 }
 
 sub reverseop {
-    my ($op, $a, $b) = @_;
+    my ($op) = @_;
 
-    return applyop($op, $a) if $op =~ m{^ (?: pre | post ) fix : }x;
-    return applyop($op, $b, $a);
+    return applyop( $op, $_[1]    ) if $op =~ m{^ (?: pre | post ) fix : }x;
+    return applyop( $op, @_[1, 2] );
 }
 
 sub _get_op_info {

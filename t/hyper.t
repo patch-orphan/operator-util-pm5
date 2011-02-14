@@ -1,4 +1,4 @@
-use Test::More tests => 278;
+use Test::More tests => 169;
 
 use ok 'Operator::Util', qw( hyper );
 
