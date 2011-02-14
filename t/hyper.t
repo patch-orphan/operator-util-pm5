@@ -1,4 +1,4 @@
-use Test::More tests => 169;
+use Test::More tests => 168;
 
 use ok 'Operator::Util', qw( hyper );
 
@@ -39,10 +39,6 @@ my @e;
     @r = hyper 'prefix:-', [3,2,1];
     my @e = (-3,-2,-1);
     is_deeply \@r, \@e, 'hyper op on assignment/pipeline';
-
-    @r = hyper '-', [3,2,1];
-    @e = (-3,-2,-1);
-    is_deeply \@r, \@e, 'hyper op on assignment/pipeline notation';
 };
 
 { # dimension upgrade
