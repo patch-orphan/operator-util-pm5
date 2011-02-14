@@ -2,7 +2,6 @@ use Module::Build;
 
 my $build = Module::Build->new(
     module_name    => 'Operator::Util',
-    release_status => 'testing',
     license        => 'Perl_5',
     create_license => 1,
     create_readme  => 1,
