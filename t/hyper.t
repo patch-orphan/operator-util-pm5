@@ -101,35 +101,39 @@ my @e;
     is_deeply \@r, \@e, "operator call on integer list elements";
 };
 
-{ # distribution for unary prefix
-    my @r;
-    @r = hyper 'prefix:-', [[1, 2], [3, [4, 5]]];
-    my @e = ([-1, -2], [-3, [-4, -5]]);
-    is_deeply \@r, \@e, "distribution for unary prefix";
-};
+TODO: {
+    local $TODO = 'distribution NYI';
 
-{ # distribution for unary postfix autoincrement
-    my @r;
-    @r = ([1, 2], [3, [4, 5]]);
-    hyper 'postfix:++', \@r;
-    my @e = ([2, 3], [4, [5, 6]]);
-    is_deeply \@r, \@e, "distribution for unary postfix autoincr";
-};
+    { # distribution for unary prefix
+        my @r;
+        @r = hyper 'prefix:-', [[1, 2], [3, [4, 5]]];
+        my @e = ([-1, -2], [-3, [-4, -5]]);
+        is_deeply \@r, \@e, "distribution for unary prefix";
+    };
 
-{ # distribution for binary infix
-    my @r;
-    @r = hyper '+', [1, 2, [3, 4]], [4, 5, [6, 7]];
-    my @e = (5, 7, [9, 11]);
-    is_deeply \@r, \@e, "distribution for binary infix, same shape";
+    { # distribution for unary postfix autoincrement
+        my @r;
+        @r = ([1, 2], [3, [4, 5]]);
+        hyper 'postfix:++', \@r;
+        my @e = ([2, 3], [4, [5, 6]]);
+        is_deeply \@r, \@e, "distribution for unary postfix autoincr";
+    };
 
-    @r = hyper '+', [1, 2, [3, 4]], [5, 6, 7], dwim_right=>1;
-    @e = (6, 8, [10, 11]);
-    is_deeply \@r, \@e, "distribution for binary infix, dimension upgrade";
+    { # distribution for binary infix
+        my @r;
+        @r = hyper '+', [1, 2, [3, 4]], [4, 5, [6, 7]];
+        my @e = (5, 7, [9, 11]);
+        is_deeply \@r, \@e, "distribution for binary infix, same shape";
 
-    @r = hyper '+', [[1, 2], 3], [4, [5, 6]], dwim=>1;
-    @e = ([5, 6], [8, 9]);
-    is_deeply \@r, \@e, "distribution for binary infix, S03 cross-upgrade";
-};
+        @r = hyper '+', [1, 2, [3, 4]], [5, 6, 7], dwim_right=>1;
+        @e = (6, 8, [10, 11]);
+        is_deeply \@r, \@e, "distribution for binary infix, dimension upgrade";
+
+        @r = hyper '+', [[1, 2], 3], [4, [5, 6]], dwim=>1;
+        @e = ([5, 6], [8, 9]);
+        is_deeply \@r, \@e, "distribution for binary infix, S03 cross-upgrade";
+    };
+}
 
 { # regression test, ensure that hyper works on arrays
     my @r1;
@@ -149,7 +153,8 @@ my @e;
 # mixed hyper and reduce metaops -
 # this unveils a spec bug as << recurses into arrays and [+] never gets applied,
 # so we disable the entire chunk for now.
-{
+TODO: {
+    local $TODO = 'distribution NYI';
     is_deeply [hyper '[+]', [[1,2,3], [4,5,6]]], [6,15], "mixed hyper and reduce metaop ([+]<<) works";
 }
 
@@ -299,7 +304,8 @@ TODO: {
     is $r{c},          3, 'hash - correct result from >>.abs';
 }
 
-{
+TODO: {
+    local $TODO = 'distribution NYI';
     my @a = (1, { a => 2, b => 3 }, 4);
     my @b = qw<a b c>;
     my @c = ('z', { a => 'y', b => 'x' }, 'w');
@@ -348,7 +354,8 @@ TODO: {
     is $r[5],    "4f", 'hash in array - correct result from <<~>>';
 }
 
-{
+TODO: {
+    local $TODO = 'distribution NYI';
     my @a = (1, { a => 2, b => 3 }, 4);
     my @r = hyper 'prefix:-', \@a;
     is scalar @r, 3, 'hash in array - result array is the correct length';
