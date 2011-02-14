@@ -300,7 +300,7 @@ __END__
 
 =head1 NAME
 
-Operator::Util - A selection of higher-order functions that take operators as arguments
+Operator::Util - A selection of array and hash functions that extend operators
 
 =head1 VERSION
 
@@ -318,15 +318,28 @@ This document describes Operator::Util version 0.00_1.
 
 =head1 WARNING
 
-This is an early release of Operator::Util.  The interface and functionality may change in the future based on user feedback.  Please make suggestions by creating an issue at L<http://github.com/patch/operator-util-pm5/issues>.
+This is an early release of Operator::Util.  The interface and functionality
+may change in the future based on user feedback.  Please make suggestions by
+creating an issue at L<http://github.com/patch/operator-util-pm5/issues>.
+
+The documentation is in the process of being thouroughly expanded.
 
 =head1 DESCRIPTION
 
-A pragmatic approach at providing the functionality of many of Perl 6's meta operators in Perl 5.
+A pragmatic approach at providing the functionality of many of Perl 6's meta
+operators in Perl 5.
 
-The terms "operator string" or "opstring" are used to describe a string that represents an operator, such as the string C<'+'> for the addition operator or the string C<'.'> for the concatenation operator.  Except where noted, opstrings default to binary infix operators and the short form may be used, e.g., C<'*'> instead of C<'infix:*'>.  Unary opstrings must be stated in the full form with C<prefix:> or C<postfix:> prepended.  Note however that the provided functions do not modify the operand arguments, therefore rendering C<'postfix:++'> and C<'postfix:--'> as no-ops.
+The terms "operator string" or "opstring" are used to describe a string that
+represents an operator, such as the string C<'+'> for the addition operator or
+the string C<'.'> for the concatenation operator.  Except where noted,
+opstrings default to binary infix operators and the short form may be used,
+e.g., C<'*'> instead of C<'infix:*'>.  All other operator types (prefix,
+postfix, circumfix, and postcircumfix) must have the type prepended in the
+opstrings, e.g., C<prefix:++> and C<postcircumfix:{}>.
 
-When a list is passed as an argument for any of the functions, it must be either an array reference or a scalar value that will be used as a single-element list.
+When a list is passed as an argument for any of the functions, it must be
+either an array reference or a scalar value that will be used as a
+single-element list.
 
 The following functions are provided but are not exported by default.
 
@@ -334,7 +347,9 @@ The following functions are provided but are not exported by default.
 
 =item reduce OPSTRING, LIST [, triangle => 1 ]
 
-C<reducewith> is an alias for C<reduce>.  It may be desirable to use C<reducewith> to avoid naming conflicts or confusion with L<List::Util/reduce>.
+C<reducewith> is an alias for C<reduce>.  It may be desirable to use
+C<reducewith> to avoid naming conflicts or confusion with
+L<List::Util/reduce>.
 
 =item zip OPSTRING, LIST1, LIST2
 
@@ -358,22 +373,32 @@ C<hyperwith> is an alias for C<reduce>.
 
 =item applyop OPSTRING, OPERAND
 
-If three arguments are provided to C<applyop>, apply the binary operator OPSTRING to the aperands OPERAND1 and OPERAND2.  If two arguments are provided, apply the unary operator OPSTRING to the aperand OPERAND.  The unary form defaults to using prefix operators, so 'prefix:' may be omitted, e.g., C<'++'> instead of C<'prefix:++'>;
+If three arguments are provided to C<applyop>, apply the binary operator
+OPSTRING to the aperands OPERAND1 and OPERAND2.  If two arguments are
+provided, apply the unary operator OPSTRING to the aperand OPERAND.  The unary
+form defaults to using prefix operators, so 'prefix:' may be omitted, e.g.,
+C<'++'> instead of C<'prefix:++'>;
 
     applyop '.', 'foo', 'bar'  # foobar
     applyop '++', 5            # 6
 
 =item reverseop OPSTRING, OPERAND1, OPERAND2
 
-C<reverseop> provides the same functionality as C<applyop> except that OPERAND1 and OPERAND2 are reversed.
+C<reverseop> provides the same functionality as C<applyop> except that
+OPERAND1 and OPERAND2 are reversed.
 
     reverseop '.', 'foo', 'bar'  # barfoo
 
-If an unary opstring is used, C<reverseop> has the same functionality as C<applyop>.
+If an unary opstring is used, C<reverseop> has the same functionality as
+C<applyop>.
 
 =back
 
-The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to return a flat list.  When set to C<0>, it causes the return value from each operator to be stored in an array ref, resulting in a "list of lists" being returned from the function. 
+The optional named-argument C<flat> can be passed to C<reduce>, C<zip>,
+C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to
+return a flat list.  When set to C<0>, it causes the return value from each
+operator to be stored in an array ref, resulting in a "list of lists" being
+returned from the function.
 
     zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
     zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
@@ -386,11 +411,13 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
 
 =item * Add named unary operators such as C<uc> and C<lc>
 
-=item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper> instead of just two
+=item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper>
+instead of just two
 
 =item * Support meta-operator literals such as C<Z> and C<X>
 
-=item * Should the first argument optionally be a subroutine ref instead of an operator string?
+=item * Should the first argument optionally be a subroutine ref instead of an
+operator string?
 
 =item * Should the C<flat =E<gt> 0> option be changed to C<lol =E<gt> 1>?
 
@@ -402,19 +429,28 @@ The optional named-argument C<flat> can be passed to C<reduce>, C<zip>, C<cross>
 
 =over
 
-=item * L<List::MoreUtils/pairwise> is simular to C<zip> except that its first argument is a block instead of an operator string and the remaining arguments are arrays instead of array refs:
+=item * L<perlop>
+
+=item * L<List::MoreUtils/pairwise> is simular to C<zip> except that its first
+argument is a block instead of an operator string and the remaining arguments
+are arrays instead of array refs:
 
     pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
     zip '+', \@array1, \@array2             # Operator::Util
 
-=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is simular to C<zip> when using the default operator C<','> except that the arguments are arrays instead of array refs:
+=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is simular to C<zip> when using
+the default operator C<','> except that the arguments are arrays instead of
+array refs:
 
     mesh @array1, @array2   # List::MoreUtils
     zip \@array1, \@array2  # Operator::Util
 
-=item * L<Set::CrossProduct> is an object-oriented alternative to C<cross> when using the default operator C<,>
+=item * L<Set::CrossProduct> is an object-oriented alternative to C<cross>
+when using the default operator C<,>
 
-=item * The "Meta operators" section of Synopsis 3: Perl 6 Operators (L<http://perlcabal.org/syn/S03.html#Meta_operators>) is the inspiration for this module
+=item * The "Meta operators" section of Synopsis 3: Perl 6 Operators
+(L<http://perlcabal.org/syn/S03.html#Meta_operators>) is the inspiration for
+this module
 
 =back
 
@@ -426,11 +462,14 @@ Nick Patch <patch@cpan.org>
 
 =over
 
-=item * This module is based on the Perl 6 specification, as described in the Synopsis and implemented in Rakudo
+=item * This module is loosely based on the Perl 6 specification, as described
+in the Synopsis and implemented in Rakudo
 
-=item * Much of the documentation is based on Synopsis 3: Perl 6 Operators (L<http://perlcabal.org/syn/S03.html>)
+=item * Much of the documentation is based on Synopsis 3: Perl 6 Operators
+(L<http://perlcabal.org/syn/S03.html>)
 
-=item * Most of the tests were forked from the Official Perl 6 Test Suite (L<https://github.com/perl6/roast>)
+=item * Most of the tests were forked from the Official Perl 6 Test Suite
+(L<https://github.com/perl6/roast>)
 
 =back
 
