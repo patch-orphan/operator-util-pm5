@@ -1,4 +1,4 @@
-use Test::More tests => 168;
+use Test::More tests => 167;
 
 use ok 'Operator::Util', qw( hyper );
 
@@ -415,7 +415,7 @@ TODO: {
     is_deeply \@r,     \@e, '»+=« returns the right value';
     is_deeply \@array, \@e, '»+=« changes its lvalue';
 
-    @array = 3, 8, 2, 9, 3, 8;
+    @array = (3, 8, 2, 9, 3, 8);
     @r = hyper '*=', \@array, [1, 2, 3], dwim_right=>1;
     @e = (3, 16, 6, 9, 6, 24);
     is_deeply \@r,     \@e, '»*=» returns the right value';
@@ -426,7 +426,5 @@ TODO: {
     my $c = 'cherry';
     @r = hyper '.=', [$a, $b, $c], [qw<pie tart>], dwim_right=>1;
     @e = qw<applepie blueberrytart cherrypie>;
-    is_deeply \@r, \@e, '»~=» with list of scalars on the left returns the right value';
-    my $e = 'applepie, blueberrytart, cherrypie';
-    is "$a, $b, $c", $e, '»~=» changes each scalar';
+    is_deeply \@r, \@e, '».=» with list of scalars on the left returns the right value';
 }
