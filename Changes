@@ -1,4 +1,9 @@
-Revision history for Perl extension Operator::Util
-
-0.01  Mon Feb 14 08:42:22 EST 2011
-    - initial public release
+---
+version: 0.02
+date:    
+changes:
+---
+version: 0.01
+date:    Mon Feb 14 08:42:22 EST 2011
+changes:
+- First release
