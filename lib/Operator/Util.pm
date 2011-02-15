@@ -469,8 +469,7 @@ The list concatenating form when used like this:
 
 produces
 
-    ['a', 1, 'x'],
-    ['b', 2, 'y']
+    ('a', 1, 'x', 'b', 2, 'y')
 
 This list form is common enough to have a shortcut, calling C<zip> without an
 opstring as the first argument will use C<,> by default:
@@ -479,8 +478,7 @@ opstring as the first argument will use C<,> by default:
 
 also produces
 
-    ['a', 1, 'x'],
-    ['b', 2, 'y']
+    ('a', 1, 'x', 'b', 2, 'y')
 
 Any non-mutating infix operator may be used.
 
@@ -488,12 +486,26 @@ Any non-mutating infix operator may be used.
 
 All assignment operators are considered mutating.
 
-If the underlying operator is non-associating, so is the cross operator, except for basic comparison operators since a chaining workaround is provided:
+If the underlying operator is non-associating, so is the cross operator,
+except for basic comparison operators since a chaining workaround is provided:
 
     zip('cmp', \@a, \@b, \@c)  # ILLEGAL
     zip('eq', \@a, \@b, \@c)   # ok
 
-The underlying operator is always applied with its own associativity, just as the corresponding C<reduce> operator would do.
+The underlying operator is always applied with its own associativity, just as
+the corresponding C<reduce> operator would do.
+
+All lists are assumed to be flat; multidimensional lists are handled by
+treating the first dimension as the only dimension.
+
+The response is a flat list by default.  To return a list of arrayrefs, unset
+the C<flat> argument:
+
+    zip(['a','b'], [1,2], ['x','y'], flat=>0)
+
+produces:
+
+    (['a', 1, 'x'], ['b', 2, 'y'])
 
 =head2 Cross
 
@@ -502,6 +514,67 @@ The underlying operator is always applied with its own associativity, just as th
 =item cross LIST1, LIST2
 
 C<crosswith> is an alias for C<cross>.
+
+The C<cross> function may be passed any infix opstring.  It applies the
+operator across all groupings of its list elements.
+
+The string concatenating form is:
+
+    cross('.', ['a','b'], [1,2])  # ('a1', 'a2', 'b1', 'b2')
+
+The list concatenating form when used like this:
+
+    cross(',', ['a','b'], [1,2], ['x','y'])
+
+produces
+
+    'a', 1, 'x',
+    'a', 1, 'y',
+    'a', 2, 'x',
+    'a', 2, 'y',
+    'b', 1, 'x',
+    'b', 1, 'y',
+    'b', 2, 'x',
+    'b', 2, 'y'
+
+This list form is common enough to have a shortcut, calling C<cross> without
+an opstring as the first argument will use C<,> by default:
+
+    cross(['a','b'], [1,2], ['x','y'])
+
+Any non-mutating infix operator may be used.
+
+    cross('*', [1,2], [3,4])  # (3, 4, 6, 8)
+
+All assignment operators are considered mutating.
+
+If the underlying operator is non-associating, so is the cross operator,
+except for basic comparison operators since a chaining workaround is provided:
+
+    cross('cmp', \@a, \@b, \@c)  # ILLEGAL
+    cross('eq', \@a, \@b, \@c)   # ok
+
+The underlying operator is always applied with its own associativity, just as
+the corresponding C<reduce> operator would do.
+
+All lists are assumed to be flat; multidimensional lists are handled by
+treating the first dimension as the only dimension.
+
+The response is a flat list by default.  To return a list of arrayrefs, unset
+the C<flat> argument:
+
+    cross(['a','b'], [1,2], ['x','y'], flat=>0)
+
+produces:
+
+    ['a', 1, 'x'],
+    ['a', 1, 'y'],
+    ['a', 2, 'x'],
+    ['a', 2, 'y'],
+    ['b', 1, 'x'],
+    ['b', 1, 'y'],
+    ['b', 2, 'x'],
+    ['b', 2, 'y']
 
 =head2 Hyper
 
