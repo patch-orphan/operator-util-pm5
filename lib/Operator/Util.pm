@@ -356,28 +356,28 @@ L<List::Util/reduce>.
 Any infix opstring (except for non-associating operators) can be passed to
 C<reduce> along with an arreyref to reduce the array using that operation:
 
-    reduce('+', [1, 2, 3]);  # 1 + 2 + 3 = 6
-    my @a = (5, 6);
-    reduce('*', \@a);        # 5 * 6 = 30
+    reduce('+', [1, 2, 3])  # 1 + 2 + 3 = 6
+    my @a = (5, 6)
+    reduce('*', \@a)        # 5 * 6 = 30
 
 C<reduce> associates the same way as the operator used:
 
-    reduce('-', [4, 3, 2]);   # 4-3-2 = (4-3)-2 = -1
-    reduce('**', [4, 3, 2]);  # 4**3**2 = 4**(3**2) = 262144
+    reduce('-', [4, 3, 2])   # 4-3-2 = (4-3)-2 = -1
+    reduce('**', [4, 3, 2])  # 4**3**2 = 4**(3**2) = 262144
 
 For comparison operators (like C<<>), all reduced pairs of operands are broken
 out into groups and joined with C<&&> because Perl 5 doesn't support
 comparison operator chaining:
 
-    reduce('<', [1, 3, 5]);  # 1 < 3 && 3 < 5
+    reduce('<', [1, 3, 5])  # 1 < 3 && 3 < 5
 
 If fewer than two elements are given, the results will vary depending on the
 operator:
 
-    reduce('+', []);   # 0
-    reduce('+', [5]);  # 5
-    reduce('*', []);   # 1
-    reduce('*', [5]);  # 5
+    reduce('+', [])   # 0
+    reduce('+', [5])  # 5
+    reduce('*', [])   # 1
+    reduce('*', [5])  # 5
 
 If there is one element, the C<reduce> returns that one element.  However,
 this default doesn't make sense for operators like C<<> that don't return
@@ -428,7 +428,7 @@ Operators with zero-element arrayrefs return the following values:
 
 You can say
 
-    reduce('||', [a(), b(), c(), d()]);
+    reduce('||', [a(), b(), c(), d()])
 
 to return the first true result, but the evaluation of the list is controlled
 by the semantics of the list, not the semantics of C<||>.
@@ -436,12 +436,12 @@ by the semantics of the list, not the semantics of C<||>.
 To generate all intermediate results along with the final result, you can set
 the C<triangle> argument:
 
-    reduce('+', [1..5], triangle=>1);  # (1, 3, 6, 10, 15)
+    reduce('+', [1..5], triangle=>1)  # (1, 3, 6, 10, 15)
 
 The visual picture of a triangle is not accidental.  To produce a triangular
 list of lists, you can use a "triangular comma":
 
-    reduce(',', [1..5], triangle=>1);
+    reduce(',', [1..5], triangle=>1)
     # [1],
     # [1,2],
     # [1,2,3],
@@ -455,6 +455,45 @@ list of lists, you can use a "triangular comma":
 =item zip LIST1, LIST2
 
 C<zipwith> is an alias for C<zip>.
+
+The C<zip> function may be passed any infix opstring.  It applies the operator
+across all groupings of its list elements.
+
+The string concatenating form is:
+
+    zip('.', ['a','b'], [1,2])  # ('a1', 'b2')
+
+The list concatenating form when used like this:
+
+    zip(',', ['a','b'], [1,2], ['x','y'])
+
+produces
+
+    ['a', 1, 'x'],
+    ['b', 2, 'y']
+
+This list form is common enough to have a shortcut, calling C<zip> without an
+opstring as the first argument will use C<,> by default:
+
+    zip(['a','b'], [1,2], ['x','y'])
+
+also produces
+
+    ['a', 1, 'x'],
+    ['b', 2, 'y']
+
+Any non-mutating infix operator may be used.
+
+    zip('*', [1,2], [3,4])  # (3, 8)
+
+All assignment operators are considered mutating.
+
+If the underlying operator is non-associating, so is the cross operator, except for basic comparison operators since a chaining workaround is provided:
+
+    zip('cmp', \@a, \@b, \@c)  # ILLEGAL
+    zip('eq', \@a, \@b, \@c)   # ok
+
+The underlying operator is always applied with its own associativity, just as the corresponding C<reduce> operator would do.
 
 =head2 Cross
 
