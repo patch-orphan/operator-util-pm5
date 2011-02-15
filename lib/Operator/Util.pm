@@ -318,16 +318,16 @@ This document describes Operator::Util version 0.01_1.
 
 =head1 WARNING
 
-This is an early release of Operator::Util.  The interface and functionality
-may change in the future based on user feedback.  Please make suggestions by
-creating an issue at L<http://github.com/patch/operator-util-pm5/issues>.
-
-The documentation is in the process of being thoroughly expanded.
+This is a B<pre-alpha> release of Operator::Util.  Not all features described
+in this document are complete.  Please see the L</TODO> list for details.  The
+interface and functionality may change in the future based on user feedback.
+Please make suggestions by creating an issue at
+L<http://github.com/patch/operator-util-pm5/issues>.
 
 =head1 DESCRIPTION
 
-A pragmatic approach at providing the functionality of many of Perl 6's meta
-operators in Perl 5.
+A pragmatic approach at providing the functionality of many of Perl 6's
+meta-operators in Perl 5.
 
 The terms "operator string" or "opstring" are used to describe a string that
 represents an operator, such as the string C<'+'> for the addition operator or
@@ -343,9 +343,9 @@ single-element list.
 
 The following functions are provided but are not exported by default.
 
-=over 4
-
 =head2 Reduction
+
+=over 4
 
 =item reduce OPSTRING, LIST [, triangle => 1 ]
 
@@ -354,7 +354,7 @@ C<reducewith> to avoid naming conflicts or confusion with
 L<List::Util/reduce>.
 
 Any infix opstring (except for non-associating operators) can be passed to
-C<reduce> along with an arreyref to reduce the array using that operation:
+C<reduce> along with an arrayref to reduce the array using that operation:
 
     reduce('+', [1, 2, 3])  # 1 + 2 + 3 = 6
     my @a = (5, 6)
@@ -385,7 +385,7 @@ the same type as they take, so these kinds of operators overload the
 single-element case to return something more meaningful.
 
 You can also reduce the comma operator, although there isn't much point in
-doing so.  This just returns an arreyref that compares deeply to the arreyref
+doing so.  This just returns an arrayref that compares deeply to the arrayref
 passed in:
 
     [1, 2, 3]
@@ -448,7 +448,11 @@ list of lists, you can use a "triangular comma":
     # [1,2,3,4],
     # [1,2,3,4,5]
 
+=back
+
 =head2 Zip
+
+=over 4
 
 =item zip OPSTRING, LIST1, LIST2
 
@@ -507,7 +511,11 @@ produces:
 
     (['a', 1, 'x'], ['b', 2, 'y'])
 
+=back
+
 =head2 Cross
+
+=over 4
 
 =item cross OPSTRING, LIST1, LIST2
 
@@ -576,7 +584,11 @@ produces:
     ['b', 2, 'x'],
     ['b', 2, 'y']
 
+=back
+
 =head2 Hyper
+
+=over 4
 
 =item hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
 
@@ -586,7 +598,7 @@ C<hyperwith> is an alias for C<hyper>.
 
 The C<hyper> function operates on each element of its arrayref argument (or
 arguments) and returns a single list of the results.  In other words, C<hyper>
-distributes the operator over its alaments as lists.
+distributes the operator over its elements as lists.
 
      hyper('prefix:-' [1,2,3])             # (-1,-2,-3)
      hyper('+', [1,1,2,3,5], [1,2,3,5,8])  # (2,3,5,8,13)
@@ -602,7 +614,7 @@ C<hyper> "upgrades" it, but only if you tell it to "dwim" on that side.
      hyper('-', [3,8,2,9,3,8], 1, dwim_right=>1)  # (2,7,1,8,2,7)
      hyper('+=', \@array, 42, dwim_right=>1)      # add 42 to each element
 
-If you don't know whether one side or the other will be underdimensioned, you
+If you don't know whether one side or the other will be under-dimensioned, you
 can dwim on both sides:
 
     hyper('*', $left, $right, dwim=>1)
@@ -705,7 +717,11 @@ same set of keys as the original hash.
 
      hyper('prefix:-' {a => 1, b => 2, c => 3})  # (a => -1, b => -2, c => -3)
 
+=back
+
 =head2 Other utils
+
+=over 4
 
 =item applyop OPSTRING, OPERAND1, OPERAND2
 
@@ -745,12 +761,23 @@ returned from the function.
 
 =over
 
+=item * Allow more than two arrayrefs with C<zip>, C<cross>, and C<hyper>
+
+=item * Support default operator with C<zip> and C<cross>
+
+=item * Support multi-dimensional distribution with C<hyper>
+
+=item * Support hashes with C<hyper>
+
+=item * Support the C<flat =E<gt> 0> option
+
+=item * Support chaining C<reduce>
+
+=item * Add special cases for zero- and one-element arrays with C<reduce>
+
 =item * Add C<warn>ings on errors instead of simply C<return>ing
 
 =item * Add named unary operators such as C<uc> and C<lc>
-
-=item * Allow unlimited arrayrefs passed to C<zip>, C<cross>, and C<hyper>
-instead of just two
 
 =item * Support meta-operator literals such as C<Z> and C<X>
 
@@ -800,13 +827,13 @@ Nick Patch <patch@cpan.org>
 
 =over
 
-=item * This module is loosely based on the Perl 6 specification, as described
-in the Synopsis and implemented in Rakudo
+=item * This module is based on the Perl 6 specification, as described in the
+Synopsis and implemented in Rakudo
 
-=item * Much of the documentation is based on Synopsis 3: Perl 6 Operators
-(L<http://perlcabal.org/syn/S03.html>)
+=item * Much of the documentation is taken directly from Synopsis 3: Perl 6
+Operators (L<http://perlcabal.org/syn/S03.html>)
 
-=item * Most of the tests were forked from the Official Perl 6 Test Suite
+=item * The tests were forked from the Official Perl 6 Test Suite
 (L<https://github.com/perl6/roast>)
 
 =back
