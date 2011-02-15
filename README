@@ -3,7 +3,7 @@ NAME
     operators
 
 VERSION
-    This document describes Operator::Util version 0.01_1.
+    This document describes Operator::Util version 0.02.
 
 SYNOPSIS
         use Operator::Util qw(
@@ -23,7 +23,7 @@ WARNING
 
 DESCRIPTION
     A pragmatic approach at providing the functionality of many of Perl 6's
-    meta operators in Perl 5.
+    meta-operators in Perl 5.
 
     The terms "operator string" or "opstring" are used to describe a string
     that represents an operator, such as the string '+' for the addition
@@ -433,6 +433,8 @@ DESCRIPTION
 
 TODO
     *   Allow more than two arrayrefs with "zip", "cross", and "hyper"
+
+    *   Support default operator with "zip" and "cross"
 
     *   Support multi-dimensional distribution with "hyper"
 

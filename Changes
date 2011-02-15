@@ -1,7 +1,10 @@
 ---
 version: 0.02
-date:    
+date:    Tue Feb 15 04:13:48 EST 2011
 changes:
+- Added lots of documentation
+- Added author tests
+- No functional changes
 ---
 version: 0.01
 date:    Mon Feb 14 08:42:22 EST 2011
