@@ -584,6 +584,127 @@ produces:
 
 C<hyperwith> is an alias for C<hyper>.
 
+The C<hyper> function operates on each element of its arrayref argument (or
+arguments) and returns a single list of the results.  In other words, C<hyper>
+distributes the operator over its alaments as lists.
+
+     hyper('prefix:-' [1,2,3])             # (-1,-2,-3)
+     hyper('+', [1,1,2,3,5], [1,2,3,5,8])  # (2,3,5,8,13)
+
+Unary operators always produce a list of exactly the same shape as their
+single argument.  When infix operators are presented with two arrays of
+identical shape, a result of that same shape is produced.  Otherwise the
+result depends on what C<dwim> arguments are passed.
+
+For an infix operator, if either argument is insufficiently dimensioned,
+C<hyper> "upgrades" it, but only if you tell it to "dwim" on that side.
+
+     hyper('-', [3,8,2,9,3,8], 1, dwim_right=>1)  # (2,7,1,8,2,7)
+     hyper('+=', \@array, 42, dwim_right=>1)      # add 42 to each element
+
+If you don't know whether one side or the other will be underdimensioned, you
+can dwim on both sides:
+
+    hyper('*', $left, $right, dwim=>1)
+
+The upgrade never happens on the non-dwim end of a C<hyper>.  If you write
+
+    hyper('*', $bigger, $smaller, dwim_left=>1)
+    hyper('*', $smaller, $bigger, dwim_right=>1)
+
+an exception is thrown, and if you write
+
+    hyper('*', $foo, $bar)
+
+you are requiring the shapes to be identical, or an exception will be thrown.
+
+For all hyper dwimminess, if a scalar is found where the other side expects an
+array, the scalar is considered to be an array of one element.
+
+Once we have two lists to process, we have to decide how to put the elements
+into correspondence.  If both sides are dwimmy, the short list will have to be
+repeated as many times as necessary to make the appropriate number of elements.
+
+If only one side is dwimmy, then the list on that side only will be grown or
+truncated to fit the list on the non-dwimmy side.
+
+This produces an array the same length as the corresponding dimension on the
+other side.  The original operator is then recursively applied to each
+corresponding pair of elements, in case there are more dimensions to handle.
+
+Here are some examples:
+
+    hyper('+', [1,2,3,4], [1,2]               ) # always error
+    hyper('+', [1,2,3,4], [1,2], dwim=>1      ) # (2,4,4,6) rhs dwims to 1,2,1,2
+    hyper('+', [1,2,3],   [1,2], dwim=>1      ) # (2,4,4)   rhs dwims to 1,2,1
+    hyper('+', [1,2,3,4], [1,2], dwim_left=>1 ) # (2,4)     lhs dwims to 1,2
+    hyper('+', [1,2,3,4], [1,2], dwim_right=>1) # (2,4,4,6) rhs dwims to 1,2,1,2
+    hyper('+', [1,2,3],   [1,2], dwim_right=>1) # (2,4,4)   rhs dwims to 1,2,1
+    hyper('+', [1,2,3],   1,     dwim_right=>1) # (2,3,4)   rhs dwims to 1,1,1
+
+Another way to look at it is that the dwimmy array's elements are indexed
+modulo its number of elements so as to produce as many or as few elements as
+necessary.
+
+Note that each element of a dwimmy list may in turn be expanded into another
+dimension if necessary, so you can, for instance, add one to all the elements
+of a matrix regardless of its dimensionality:
+
+    hyper('+=', \@fancy, 1, dwim_right=>1)
+
+On the non-dwimmy side, any scalar value will be treated as an array of one
+element, and for infix operators must be matched by an equivalent one-element
+array on the other side.  That is, C<hyper> is guaranteed to degenerate to the
+corresponding scalar operation when all its arguments are non-array arguments.
+
+When using a unary operator no dwimmery is ever needed:
+
+     @negatives = hyper('prefix:-', \@positives)
+
+     hyper('postfix:++', \@positions)              # increment each
+     hyper('->', \@objects, 'run', dwim_right=>1)  # call ->run() on each
+     hyper('length', ['f','oo','bar'])             # (1, 2, 3)
+
+Note that method calls are infix operators with a string used for the method
+name.
+
+Hyper operators are defined recursively on nested arrays, so:
+
+    hyper('prefix:-', [[1, 2], 3])  # ([-1, -2], -3)
+
+Likewise the dwimminess of dwimmy infixes propagates:
+
+    hyper('+', [[1, 2], 3], [4, [5, 6]], dwim=>1)  # [[5, 6], [8, 9]]
+
+C<hyper> may be applied to hashes as well as to arrays.  In this case
+"dwimminess" says whether to ignore keys that do not exist in the other hash,
+while "non-dwimminess" says to use all keys that are in either hash.  That is,
+
+    hyper('+', \%foo, \%bar, dwim=>1)
+
+gives you the intersection of the keys, while
+
+    hyper('+', \%foo, \%bar)
+
+gives you the union of the keys.  Asymmetrical hypers are also useful; for
+instance, if you say:
+
+    hyper('+', \%outer, \%inner, dwim_right=>1)
+
+only the %inner keys that already exist in %outer will occur in the result.
+Note, however, that you want
+
+    hyper('+=', \%outer, \%inner)
+
+in order to pass accumulated statistics up a tree, assuming you want %outer to
+have the union of keys.
+
+Unary hash hypers and binary hypers that have only one hash operand will apply
+the hyper operator to just the values but return a new hash value with the
+same set of keys as the original hash.
+
+     hyper('prefix:-' {a => 1, b => 2, c => 3})  # (a => -1, b => -2, c => -3)
+
 =head2 Other utils
 
 =item applyop OPSTRING, OPERAND1, OPERAND2
