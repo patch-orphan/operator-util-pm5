@@ -345,29 +345,134 @@ The following functions are provided but are not exported by default.
 
 =over 4
 
+=head2 Reduction
+
 =item reduce OPSTRING, LIST [, triangle => 1 ]
 
 C<reducewith> is an alias for C<reduce>.  It may be desirable to use
 C<reducewith> to avoid naming conflicts or confusion with
 L<List::Util/reduce>.
 
+Any infix opstring (except for non-associating operators) can be passed to
+C<reduce> along with an arreyref to reduce the array using that operation:
+
+    reduce('+', [1, 2, 3]);  # 1 + 2 + 3 = 6
+    my @a = (5, 6);
+    reduce('*', \@a);        # 5 * 6 = 30
+
+C<reduce> associates the same way as the operator used:
+
+    reduce('-', [4, 3, 2]);   # 4-3-2 = (4-3)-2 = -1
+    reduce('**', [4, 3, 2]);  # 4**3**2 = 4**(3**2) = 262144
+
+For comparison operators (like C<<>), all reduced pairs of operands are broken
+out into groups and joined with C<&&> because Perl 5 doesn't support
+comparison operator chaining:
+
+    reduce('<', [1, 3, 5]);  # 1 < 3 && 3 < 5
+
+If fewer than two elements are given, the results will vary depending on the
+operator:
+
+    reduce('+', []);   # 0
+    reduce('+', [5]);  # 5
+    reduce('*', []);   # 1
+    reduce('*', [5]);  # 5
+
+If there is one element, the C<reduce> returns that one element.  However,
+this default doesn't make sense for operators like C<<> that don't return
+the same type as they take, so these kinds of operators overload the
+single-element case to return something more meaningful.
+
+You can also reduce the comma operator, although there isn't much point in
+doing so.  This just returns an arreyref that compares deeply to the arreyref
+passed in:
+
+    [1, 2, 3]
+    reduce(',', [1, 2, 3])  # same thing
+
+Operators with zero-element arrayrefs return the following values:
+
+    **    # 1    (arguably nonsensical)
+    =~    # 1    (also for 1 arg)
+    !~    # 1    (also for 1 arg)
+    *     # 1
+    /     # fail (reduce is nonsensical)
+    %     # fail (reduce is nonsensical)
+    x     # fail (reduce is nonsensical)
+    +     # 0
+    -     # 0
+    .     # ''
+    <<    # fail (reduce is nonsensical)
+    >>    # fail (reduce is nonsensical)
+    <     # 1    (also for 1 arg)
+    >     # 1    (also for 1 arg)
+    <=    # 1    (also for 1 arg)
+    >=    # 1    (also for 1 arg)
+    lt    # 1    (also for 1 arg)
+    le    # 1    (also for 1 arg)
+    gt    # 1    (also for 1 arg)
+    ge    # 1    (also for 1 arg)
+    ==    # 1    (also for 1 arg)
+    !=    # 1    (also for 1 arg)
+    eq    # 1    (also for 1 arg)
+    ne    # 1    (also for 1 arg)
+    ~~    # 1    (also for 1 arg)
+    &     # -1   (from ^0, the 2's complement in arbitrary precision)
+    |     # 0
+    &&    # 1
+    ||    # 0
+    //    # 0
+    =     # undef (same for all assignment operators)
+    ,     # []
+
+You can say
+
+    reduce('||', [a(), b(), c(), d()]);
+
+to return the first true result, but the evaluation of the list is controlled
+by the semantics of the list, not the semantics of C<||>.
+
+To generate all intermediate results along with the final result, you can set
+the C<triangle> argument:
+
+    reduce('+', [1..5], triangle=>1);  # (1, 3, 6, 10, 15)
+
+The visual picture of a triangle is not accidental.  To produce a triangular
+list of lists, you can use a "triangular comma":
+
+    reduce(',', [1..5], triangle=>1);
+    # [1],
+    # [1,2],
+    # [1,2,3],
+    # [1,2,3,4],
+    # [1,2,3,4,5]
+
+=head2 Zip
+
 =item zip OPSTRING, LIST1, LIST2
 
 =item zip LIST1, LIST2
 
-C<zipwith> is an alias for C<reduce>.
+C<zipwith> is an alias for C<zip>.
+
+=head2 Cross
 
 =item cross OPSTRING, LIST1, LIST2
 
 =item cross LIST1, LIST2
 
-C<crosswith> is an alias for C<reduce>.
+C<crosswith> is an alias for C<cross>.
+
+=head2 Hyper
 
 =item hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
 
 =item hyper OPSTRING, LIST
 
-C<hyperwith> is an alias for C<reduce>.
+C<hyperwith> is an alias for C<hyper>.
+
+=head2 Other utils
 
 =item applyop OPSTRING, OPERAND1, OPERAND2
 
