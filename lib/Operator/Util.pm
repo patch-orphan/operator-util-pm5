@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use parent 'Exporter';
 
-our $VERSION     = '0.01';
+our $VERSION     = '0.01_1';
 our @EXPORT_OK   = qw(
     reduce  reducewith
     zip     zipwith
@@ -304,7 +304,7 @@ Operator::Util - A selection of array and hash functions that extend operators
 
 =head1 VERSION
 
-This document describes Operator::Util version 0.01.
+This document describes Operator::Util version 0.01_1.
 
 =head1 SYNOPSIS
 
