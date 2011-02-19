@@ -1,6 +1,6 @@
 use Test::More tests => 14;
 
-use ok 'Operator::Util', qw( cross );
+use ok 'Operator::Util', qw( cross crosswith );
 
 {
     my @result = cross ['a','b'], [1,2];
@@ -9,7 +9,7 @@ use ok 'Operator::Util', qw( cross );
 
 }
 
-is_deeply [cross '**', [1,2,3], [2,4]], [1,1,4,16,9,81], 'cross(**) works';
+is_deeply [crosswith '**', [1,2,3], [2,4]], [1,1,4,16,9,81], 'crosswith(**) works';
 
 # This becomes a flat list in
 {
@@ -26,16 +26,16 @@ TODO: {
 
 # string concatenating form is
 {
-    my @result = cross '.', ['a','b'], [1,2];
+    my @result = crosswith '.', ['a','b'], [1,2];
     is_deeply \@result, [qw< a1 a2 b1 b2 >],
-        'cross(.) produces expected result';
+        'crosswith(.) produces expected result';
 }
 
 # list concatenating form when used like this
 TODO: {
-    local $TODO = '3+ list cross NYI';
-    my @result = cross ',', ['a','b'], [1,2], ['x','y'];
-    is scalar @result, 24, '3-list cross(,) produces correct number of elements';
+    local $TODO = '3+ list crosswith NYI';
+    my @result = crosswith ',', ['a','b'], [1,2], ['x','y'];
+    is scalar @result, 24, '3-list crosswith(,) produces correct number of elements';
 
     my @expected = (
         ['a', 1, 'x'],
@@ -47,22 +47,22 @@ TODO: {
         ['b', 2, 'x'],
         ['b', 2, 'y'],
     );
-    is_deeply \@result, \@expected, '3-list cross(,) produces correct results';
+    is_deeply \@result, \@expected, '3-list crosswith(,) produces correct results';
 }
 
 # any existing non-mutating infix operator
-is_deeply [cross '*', [1,2], [3,4]], [3,4,6,8], 'cross(*) works';
+is_deeply [crosswith '*', [1,2], [3,4]], [3,4,6,8], 'crosswith(*) works';
 
-is_deeply [cross '<=>', [1,2], [3,2,0]], [-1,-1,1,-1,0,1], 'cross(<=>) works';
+is_deeply [crosswith '<=>', [1,2], [3,2,0]], [-1,-1,1,-1,0,1], 'crosswith(<=>) works';
 
 # underlying operator non-associating
 TODO: {
     local $TODO = 'non-associating op error NYI';
-    ok !cross('cmp', ['a','b'], [1,2], ['x','y']),
+    ok !crosswith('cmp', ['a','b'], [1,2], ['x','y']),
         'non-associating ops cannot have 3+ lists';
 }
 
 # tests for non-list arguments
-is_deeply [cross '*', 1, [3,4]], [3,4], 'cross(*) works with scalar left side';
-is_deeply [cross '*', [1,2], 3], [3,6], 'cross(*) works with scalar right side';
-is_deeply [cross '*', 1, 3], [3], 'cross(*) works with scalar both sides';
+is_deeply [crosswith '*', 1, [3,4]], [3,4], 'crosswith(*) works with scalar left side';
+is_deeply [crosswith '*', [1,2], 3], [3,6], 'crosswith(*) works with scalar right side';
+is_deeply [crosswith '*', 1, 3], [3], 'crosswith(*) works with scalar both sides';
