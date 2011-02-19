@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use parent 'Exporter';
 
-our $VERSION     = '0.02';
+our $VERSION     = '0.02_1';
 our @EXPORT_OK   = qw(
     reduce  reducewith
     zip     zipwith
