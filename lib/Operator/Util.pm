@@ -15,8 +15,6 @@ our @EXPORT_OK   = qw(
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 *reducewith = \&reduce;
-*zipwith    = \&zip;
-*crosswith  = \&cross;
 *hyperwith  = \&hyper;
 
 my %ops = (
@@ -171,9 +169,11 @@ sub reduce {
     return $result;
 }
 
-sub zip {
-    my $op = @_ == 2 ? 'infix:,' : shift;
-    my ($lhs, $rhs) = @_;
+sub zip   { zipwith(   ',', @_ ) }
+sub cross { crosswith( ',', @_ ) }
+
+sub zipwith {
+    my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
 
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
@@ -188,9 +188,8 @@ sub zip {
     return @results;
 }
 
-sub cross {
-    my $op = @_ == 2 ? 'infix:,' : shift;
-    my ($lhs, $rhs) = @_;
+sub crosswith {
+    my ($op, $lhs, $rhs) = @_;
     my ($a, $b, @results);
 
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
@@ -304,7 +303,7 @@ Operator::Util - A selection of array and hash functions that extend operators
 
 =head1 VERSION
 
-This document describes Operator::Util version 0.02.
+This document describes Operator::Util version 0.02_1.
 
 =head1 SYNOPSIS
 
@@ -454,22 +453,20 @@ list of lists, you can use a "triangular comma":
 
 =over 4
 
-=item zip OPSTRING, LIST1, LIST2
+=item zipwith OPSTRING, LIST1, LIST2
 
 =item zip LIST1, LIST2
 
-C<zipwith> is an alias for C<zip>.
-
-The C<zip> function may be passed any infix opstring.  It applies the operator
+The C<zipwith> function may be passed any infix opstring.  It applies the operator
 across all groupings of its list elements.
 
 The string concatenating form is:
 
-    zip('.', ['a','b'], [1,2])  # ('a1', 'b2')
+    zipwith('.', ['a','b'], [1,2])  # ('a1', 'b2')
 
 The list concatenating form when used like this:
 
-    zip(',', ['a','b'], [1,2], ['x','y'])
+    zipwith(',', ['a','b'], [1,2], ['x','y'])
 
 produces
 
@@ -486,15 +483,15 @@ also produces
 
 Any non-mutating infix operator may be used.
 
-    zip('*', [1,2], [3,4])  # (3, 8)
+    zipwith('*', [1,2], [3,4])  # (3, 8)
 
 All assignment operators are considered mutating.
 
-If the underlying operator is non-associating, so is the cross operator,
-except for basic comparison operators since a chaining workaround is provided:
+If the underlying operator is non-associating, so is C<zipwith>, except for
+basic comparison operators since a chaining workaround is provided:
 
-    zip('cmp', \@a, \@b, \@c)  # ILLEGAL
-    zip('eq', \@a, \@b, \@c)   # ok
+    zipwith('cmp', \@a, \@b, \@c)  # ILLEGAL
+    zipwith('eq', \@a, \@b, \@c)   # ok
 
 The underlying operator is always applied with its own associativity, just as
 the corresponding C<reduce> operator would do.
@@ -517,22 +514,20 @@ produces:
 
 =over 4
 
-=item cross OPSTRING, LIST1, LIST2
+=item crosswith OPSTRING, LIST1, LIST2
 
 =item cross LIST1, LIST2
 
-C<crosswith> is an alias for C<cross>.
-
-The C<cross> function may be passed any infix opstring.  It applies the
+The C<crosswith> function may be passed any infix opstring.  It applies the
 operator across all groupings of its list elements.
 
 The string concatenating form is:
 
-    cross('.', ['a','b'], [1,2])  # ('a1', 'a2', 'b1', 'b2')
+    crosswith('.', ['a','b'], [1,2])  # ('a1', 'a2', 'b1', 'b2')
 
 The list concatenating form when used like this:
 
-    cross(',', ['a','b'], [1,2], ['x','y'])
+    crosswith(',', ['a','b'], [1,2], ['x','y'])
 
 produces
 
@@ -552,15 +547,15 @@ an opstring as the first argument will use C<,> by default:
 
 Any non-mutating infix operator may be used.
 
-    cross('*', [1,2], [3,4])  # (3, 4, 6, 8)
+    crosswith('*', [1,2], [3,4])  # (3, 4, 6, 8)
 
 All assignment operators are considered mutating.
 
-If the underlying operator is non-associating, so is the cross operator,
-except for basic comparison operators since a chaining workaround is provided:
+If the underlying operator is non-associating, so is C<crosswith>, except for
+basic comparison operators since a chaining workaround is provided:
 
-    cross('cmp', \@a, \@b, \@c)  # ILLEGAL
-    cross('eq', \@a, \@b, \@c)   # ok
+    crosswith('cmp', \@a, \@b, \@c)  # ILLEGAL
+    crosswith('eq', \@a, \@b, \@c)   # ok
 
 The underlying operator is always applied with its own associativity, just as
 the corresponding C<reduce> operator would do.
@@ -733,37 +728,36 @@ provided, apply the unary operator OPSTRING to the operand OPERAND.  The unary
 form defaults to using prefix operators, so 'prefix:' may be omitted, e.g.,
 C<'++'> instead of C<'prefix:++'>;
 
-    applyop '.', 'foo', 'bar'  # foobar
-    applyop '++', 5            # 6
+    applyop('.', 'foo', 'bar')  # foobar
+    applyop('++', 5)            # 6
 
 =item reverseop OPSTRING, OPERAND1, OPERAND2
 
 C<reverseop> provides the same functionality as C<applyop> except that
 OPERAND1 and OPERAND2 are reversed.
 
-    reverseop '.', 'foo', 'bar'  # barfoo
+    reverseop('.', 'foo', 'bar')  # barfoo
 
 If an unary opstring is used, C<reverseop> has the same functionality as
 C<applyop>.
 
 =back
 
-The optional named-argument C<flat> can be passed to C<reduce>, C<zip>,
-C<cross>, and C<hyper>.  It defaults to C<1>, which causes the function to
-return a flat list.  When set to C<0>, it causes the return value from each
-operator to be stored in an array ref, resulting in a "list of lists" being
-returned from the function.
+The optional named-argument C<flat> can be passed to C<reduce>, C<zipwith>,
+C<zip>, C<crosswith>, C<cross>, and C<hyper>.  It defaults to C<1>, which
+causes the function to return a flat list.  When set to C<0>, it causes the
+return value from each operator to be stored in an array ref, resulting in a
+"list of lists" being returned from the function.
 
-    zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
-    zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
+    zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
+    zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
 
 =head1 TODO
 
 =over
 
-=item * Allow more than two arrayrefs with C<zip>, C<cross>, and C<hyper>
-
-=item * Support default operator with C<zip> and C<cross>
+=item * Allow more than two arrayrefs with C<zipwith>, C<crosswith>, and
+C<hyper>
 
 =item * Support multi-dimensional distribution with C<hyper>
 
