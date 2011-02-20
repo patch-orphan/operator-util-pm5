@@ -330,11 +330,11 @@ meta-operators in Perl 5.
 
 The terms "operator string" or "opstring" are used to describe a string that
 represents an operator, such as the string C<'+'> for the addition operator or
-the string C<'.'> for the concatenation operator.  Except where noted,
-opstrings default to binary infix operators and the short form may be used,
-e.g., C<'*'> instead of C<'infix:*'>.  All other operator types (prefix,
-postfix, circumfix, and postcircumfix) must have the type prepended in the
-opstrings, e.g., C<prefix:++> and C<postcircumfix:{}>.
+the string C<'.'> for the concatenation operator.  Opstrings default to binary
+infix operators and the short form may be used, e.g., C<'*'> instead of
+C<'infix:*'>.  All other operator types (prefix, postfix, circumfix, and
+postcircumfix) must have the type prepended in the opstrings, e.g.,
+C<prefix:++> and C<postcircumfix:{}>.
 
 When a list is passed as an argument for any of the functions, it must be
 either an array reference or a scalar value that will be used as a
@@ -722,14 +722,11 @@ same set of keys as the original hash.
 
 =item applyop OPSTRING, OPERAND
 
-If three arguments are provided to C<applyop>, apply the binary operator
-OPSTRING to the operands OPERAND1 and OPERAND2.  If two arguments are
-provided, apply the unary operator OPSTRING to the operand OPERAND.  The unary
-form defaults to using prefix operators, so 'prefix:' may be omitted, e.g.,
-C<'++'> instead of C<'prefix:++'>;
+Apply the operator OPSTRING to the operands OPERAND1 and OPERAND2.  If an
+unary opstring is provided, only the first operand will be used.
 
     applyop('.', 'foo', 'bar')  # foobar
-    applyop('++', 5)            # 6
+    applyop('prefix:++', 5)     # 6
 
 =item reverseop OPSTRING, OPERAND1, OPERAND2
 
@@ -743,11 +740,11 @@ C<applyop>.
 
 =back
 
-The optional named-argument C<flat> can be passed to C<reduce>, C<zipwith>,
-C<zip>, C<crosswith>, C<cross>, and C<hyper>.  It defaults to C<1>, which
-causes the function to return a flat list.  When set to C<0>, it causes the
-return value from each operator to be stored in an array ref, resulting in a
-"list of lists" being returned from the function.
+The optional named-argument C<flat> can be passed to any of the functions
+except for C<applyop> and C<reverseop>.  It defaults to C<1>, which causes the
+function to return a flat list.  When set to C<0>, it causes the return value
+from each operator to be stored in an array ref, resulting in a "list of
+lists" being returned from the function.
 
     zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
     zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
@@ -773,7 +770,9 @@ C<hyper>
 
 =item * Add named unary operators such as C<uc> and C<lc>
 
-=item * Support meta-operator literals such as C<Z> and C<X>
+=item * Support meta-operator literals such as C<Z> and C<X> in C<applyop>
+
+=item * Add C<evalop> for C<eval>ing strings including meta-operator literals
 
 =item * Should the first argument optionally be a subroutine ref instead of an
 operator string?
@@ -797,15 +796,13 @@ are arrays instead of array refs:
     pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
     zip '+', \@array1, \@array2             # Operator::Util
 
-=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is similar to C<zip> when using
-the default operator C<','> except that the arguments are arrays instead of
-array refs:
+=item * C<mesh> a.k.a. L<List::MoreUtils/zip> is similar to C<zip> except that
+the arguments are arrays instead of array refs:
 
     mesh @array1, @array2   # List::MoreUtils
     zip \@array1, \@array2  # Operator::Util
 
 =item * L<Set::CrossProduct> is an object-oriented alternative to C<cross>
-when using the default operator C<,>
 
 =item * The "Meta operators" section of Synopsis 3: Perl 6 Operators
 (L<http://perlcabal.org/syn/S03.html#Meta_operators>) is the inspiration for
