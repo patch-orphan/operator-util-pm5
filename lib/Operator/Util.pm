@@ -19,108 +19,102 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 my %ops = (
     # binary infix
-    'infix:**'  => sub { $_[0] **  $_[1] },
-    'infix:=~'  => sub { $_[0] =~  $_[1] },
-    'infix:!~'  => sub { $_[0] !~  $_[1] },
-    'infix:*'   => sub { $_[0] *   $_[1] },
-    'infix:/'   => sub { $_[0] /   $_[1] },
-    'infix:%'   => sub { $_[0] %   $_[1] },
-    'infix:x'   => sub { $_[0] x   $_[1] },
-    'infix:+'   => sub { $_[0] +   $_[1] },
-    'infix:-'   => sub { $_[0] -   $_[1] },
-    'infix:.'   => sub { $_[0] .   $_[1] },
-    'infix:<<'  => sub { $_[0] <<  $_[1] },
-    'infix:>>'  => sub { $_[0] >>  $_[1] },
-    'infix:<'   => sub { $_[0] <   $_[1] },
-    'infix:>'   => sub { $_[0] >   $_[1] },
-    'infix:<='  => sub { $_[0] <=  $_[1] },
-    'infix:>='  => sub { $_[0] >=  $_[1] },
-    'infix:lt'  => sub { $_[0] lt  $_[1] },
-    'infix:gt'  => sub { $_[0] gt  $_[1] },
-    'infix:le'  => sub { $_[0] le  $_[1] },
-    'infix:ge'  => sub { $_[0] ge  $_[1] },
-    'infix:=='  => sub { $_[0] ==  $_[1] },
-    'infix:!='  => sub { $_[0] !=  $_[1] },
-    'infix:<=>' => sub { $_[0] <=> $_[1] },
-    'infix:eq'  => sub { $_[0] eq  $_[1] },
-    'infix:ne'  => sub { $_[0] ne  $_[1] },
-    'infix:cmp' => sub { $_[0] cmp $_[1] },
-    'infix:&'   => sub { $_[0] &   $_[1] },
-    'infix:|'   => sub { $_[0] |   $_[1] },
-    'infix:^'   => sub { $_[0] ^   $_[1] },
-    'infix:&&'  => sub { $_[0] &&  $_[1] },
-    'infix:||'  => sub { $_[0] ||  $_[1] },
-    'infix:..'  => sub { $_[0] ..  $_[1] },
-    'infix:...' => sub { $_[0] ... $_[1] },
-    'infix:='   => sub { $_[0] =   $_[1] },
-    'infix:**=' => sub { $_[0] **= $_[1] },
-    'infix:*='  => sub { $_[0] *=  $_[1] },
-    'infix:/='  => sub { $_[0] /=  $_[1] },
-    'infix:%='  => sub { $_[0] %=  $_[1] },
-    'infix:x='  => sub { $_[0] x=  $_[1] },
-    'infix:+='  => sub { $_[0] +=  $_[1] },
-    'infix:-='  => sub { $_[0] -=  $_[1] },
-    'infix:.='  => sub { $_[0] .=  $_[1] },
-    'infix:<<=' => sub { $_[0] <<= $_[1] },
-    'infix:>>=' => sub { $_[0] >>= $_[1] },
-    'infix:&='  => sub { $_[0] &=  $_[1] },
-    'infix:|='  => sub { $_[0] |=  $_[1] },
-    'infix:^='  => sub { $_[0] ^=  $_[1] },
-    'infix:&&=' => sub { $_[0] &&= $_[1] },
-    'infix:||=' => sub { $_[0] ||= $_[1] },
-    'infix:,'   => sub { $_[0] ,   $_[1] },
-    'infix:=>'  => sub { $_[0] =>  $_[1] },
-    'infix:and' => sub { $_[0] and $_[1] },
-    'infix:or'  => sub { $_[0] or  $_[1] },
-    'infix:xor' => sub { $_[0] xor $_[1] },
-    'infix:->'  => sub { my $m = $_[1];         $_[0]->$m },
-    'infix:->=' => sub { my $m = $_[1]; $_[0] = $_[0]->$m },
+    'infix:**'  => { sub => sub { $_[0] **  $_[1] }, right => 1 },
+    'infix:=~'  => { sub => sub { $_[0] =~  $_[1] } },
+    'infix:!~'  => { sub => sub { $_[0] !~  $_[1] } },
+    'infix:*'   => { sub => sub { $_[0] *   $_[1] } },
+    'infix:/'   => { sub => sub { $_[0] /   $_[1] } },
+    'infix:%'   => { sub => sub { $_[0] %   $_[1] } },
+    'infix:x'   => { sub => sub { $_[0] x   $_[1] } },
+    'infix:+'   => { sub => sub { $_[0] +   $_[1] } },
+    'infix:-'   => { sub => sub { $_[0] -   $_[1] } },
+    'infix:.'   => { sub => sub { $_[0] .   $_[1] } },
+    'infix:<<'  => { sub => sub { $_[0] <<  $_[1] } },
+    'infix:>>'  => { sub => sub { $_[0] >>  $_[1] } },
+    'infix:<'   => { sub => sub { $_[0] <   $_[1] }, chain => 1 },
+    'infix:>'   => { sub => sub { $_[0] >   $_[1] }, chain => 1 },
+    'infix:<='  => { sub => sub { $_[0] <=  $_[1] }, chain => 1 },
+    'infix:>='  => { sub => sub { $_[0] >=  $_[1] }, chain => 1 },
+    'infix:lt'  => { sub => sub { $_[0] lt  $_[1] }, chain => 1 },
+    'infix:gt'  => { sub => sub { $_[0] gt  $_[1] }, chain => 1 },
+    'infix:le'  => { sub => sub { $_[0] le  $_[1] }, chain => 1 },
+    'infix:ge'  => { sub => sub { $_[0] ge  $_[1] }, chain => 1 },
+    'infix:=='  => { sub => sub { $_[0] ==  $_[1] }, chain => 1 },
+    'infix:!='  => { sub => sub { $_[0] !=  $_[1] }, chain => 1 },
+    'infix:<=>' => { sub => sub { $_[0] <=> $_[1] }, chain => 1 },
+    'infix:eq'  => { sub => sub { $_[0] eq  $_[1] }, chain => 1 },
+    'infix:ne'  => { sub => sub { $_[0] ne  $_[1] }, chain => 1 },
+    'infix:cmp' => { sub => sub { $_[0] cmp $_[1] }, chain => 1 },
+    'infix:&'   => { sub => sub { $_[0] &   $_[1] } },
+    'infix:|'   => { sub => sub { $_[0] |   $_[1] } },
+    'infix:^'   => { sub => sub { $_[0] ^   $_[1] } },
+    'infix:&&'  => { sub => sub { $_[0] &&  $_[1] } },
+    'infix:||'  => { sub => sub { $_[0] ||  $_[1] } },
+    'infix:..'  => { sub => sub { $_[0] ..  $_[1] } },
+    'infix:...' => { sub => sub { $_[0] ... $_[1] } },
+    'infix:='   => { sub => sub { $_[0] =   $_[1] } },
+    'infix:**=' => { sub => sub { $_[0] **= $_[1] } },
+    'infix:*='  => { sub => sub { $_[0] *=  $_[1] } },
+    'infix:/='  => { sub => sub { $_[0] /=  $_[1] } },
+    'infix:%='  => { sub => sub { $_[0] %=  $_[1] } },
+    'infix:x='  => { sub => sub { $_[0] x=  $_[1] } },
+    'infix:+='  => { sub => sub { $_[0] +=  $_[1] } },
+    'infix:-='  => { sub => sub { $_[0] -=  $_[1] } },
+    'infix:.='  => { sub => sub { $_[0] .=  $_[1] } },
+    'infix:<<=' => { sub => sub { $_[0] <<= $_[1] } },
+    'infix:>>=' => { sub => sub { $_[0] >>= $_[1] } },
+    'infix:&='  => { sub => sub { $_[0] &=  $_[1] } },
+    'infix:|='  => { sub => sub { $_[0] |=  $_[1] } },
+    'infix:^='  => { sub => sub { $_[0] ^=  $_[1] } },
+    'infix:&&=' => { sub => sub { $_[0] &&= $_[1] } },
+    'infix:||=' => { sub => sub { $_[0] ||= $_[1] } },
+    'infix:,'   => { sub => sub { $_[0] ,   $_[1] } },
+    'infix:=>'  => { sub => sub { $_[0] =>  $_[1] } },
+    'infix:and' => { sub => sub { $_[0] and $_[1] } },
+    'infix:or'  => { sub => sub { $_[0] or  $_[1] } },
+    'infix:xor' => { sub => sub { $_[0] xor $_[1] } },
+    'infix:->'  => { sub => sub { my $m = $_[1];         $_[0]->$m } },
+    'infix:->=' => { sub => sub { my $m = $_[1]; $_[0] = $_[0]->$m } },
 
     # unary prefix
-    'prefix:++' => sub { ++$_[0]  },
-    'prefix:--' => sub { --$_[0]  },
-    'prefix:!'  => sub {  !$_[0]  },
-    'prefix:~'  => sub {  ~$_[0]  },
-    'prefix:\\' => sub {  \$_[0]  },
-    'prefix:+'  => sub {  +$_[0]  },
-    'prefix:-'  => sub {  -$_[0]  },
-    'prefix:$'  => sub { ${$_[0]} },
-    'prefix:@'  => sub { @{$_[0]} },
-    'prefix:%'  => sub { %{$_[0]} },
-    'prefix:&'  => sub { &{$_[0]} },
-    'prefix:*'  => sub { *{$_[0]} },
+    'prefix:++' => { sub => sub { ++$_[0]  } },
+    'prefix:--' => { sub => sub { --$_[0]  } },
+    'prefix:!'  => { sub => sub {  !$_[0]  } },
+    'prefix:~'  => { sub => sub {  ~$_[0]  } },
+    'prefix:\\' => { sub => sub {  \$_[0]  } },
+    'prefix:+'  => { sub => sub {  +$_[0]  } },
+    'prefix:-'  => { sub => sub {  -$_[0]  } },
+    'prefix:$'  => { sub => sub { ${$_[0]} } },
+    'prefix:@'  => { sub => sub { @{$_[0]} } },
+    'prefix:%'  => { sub => sub { %{$_[0]} } },
+    'prefix:&'  => { sub => sub { &{$_[0]} } },
+    'prefix:*'  => { sub => sub { *{$_[0]} } },
 
     # unary postfix
-    'postfix:++' => sub { $_[0]++ },
-    'postfix:--' => sub { $_[0]-- },
+    'postfix:++' => { sub => sub { $_[0]++ } },
+    'postfix:--' => { sub => sub { $_[0]-- } },
 
     # circumfix
-    'circumfix:()'  => sub {  ($_[0]) },
-    'circumfix:[]'  => sub {  [$_[0]] },
-    'circumfix:{}'  => sub {  {$_[0]} },
-    'circumfix:${}' => sub { ${$_[0]} },
-    'circumfix:@{}' => sub { @{$_[0]} },
-    'circumfix:%{}' => sub { %{$_[0]} },
-    'circumfix:&{}' => sub { &{$_[0]} },
-    'circumfix:*{}' => sub { *{$_[0]} },
+    'circumfix:()'  => { sub => sub {  ($_[0]) } },
+    'circumfix:[]'  => { sub => sub {  [$_[0]] } },
+    'circumfix:{}'  => { sub => sub {  {$_[0]} } },
+    'circumfix:${}' => { sub => sub { ${$_[0]} } },
+    'circumfix:@{}' => { sub => sub { @{$_[0]} } },
+    'circumfix:%{}' => { sub => sub { %{$_[0]} } },
+    'circumfix:&{}' => { sub => sub { &{$_[0]} } },
+    'circumfix:*{}' => { sub => sub { *{$_[0]} } },
 
     # postcircumfix
-    'postcircumfix:[]'   => sub { $_[0]->[$_[1]] },
-    'postcircumfix:{}'   => sub { $_[0]->{$_[1]} },
-    'postcircumfix:->[]' => sub { $_[0]->[$_[1]] },
-    'postcircumfix:->{}' => sub { $_[0]->{$_[1]} },
+    'postcircumfix:[]'   => { sub => sub { $_[0]->[$_[1]] } },
+    'postcircumfix:{}'   => { sub => sub { $_[0]->{$_[1]} } },
+    'postcircumfix:->[]' => { sub => sub { $_[0]->[$_[1]] } },
+    'postcircumfix:->{}' => { sub => sub { $_[0]->{$_[1]} } },
 );
-
-my %rightops = ('infix:**' => 1);
-my %chainops = map { ( "infix:$_" => 1 ) } qw{
-    < > <= >= lt gt le ge == != <=> eq ne cmp ~~
-};
 
 # Perl 5.10 operators
 if ($] >= 5.010) {
-    for my $op ('~~', '//') {
-        $ops{"infix:$op"} = eval "sub { \$_[0] $op \$_[1] }";
-    }
+    $ops{'infix:~~'} = { sub => eval 'sub { $_[0] ~~ $_[1] }', chain => 1 };
+    $ops{'infix://'} = { sub => eval 'sub { $_[0] // $_[1] }' };
 }
 
 sub reduce {
@@ -132,28 +126,28 @@ sub reduce {
     return unless @list;
     return $list[0] if @list == 1;
 
-    ($op, $type, $trait) = _get_op_info($op);
+    ($op, $type) = _get_op_info($op);
 
     return unless $op;
     return if $type ne 'infix';
 
-    if ($trait eq 'right') {
+    if ( $ops{$op}{right} ) {
         @list = reverse @list;
     }
 
     my $result   = shift @list;
     my $bool     = 1;
-    my @triangle = $trait eq 'chain' ? $bool : $result;
+    my @triangle = $ops{$op}{chain} ? $bool : $result;
 
     my $apply = sub {
         my ($a, $b) = @_;
-        return applyop( $op, $trait eq 'right' ? ($b, $a) : ($a, $b) );
+        return applyop( $op, $ops{$op}{right} ? ($b, $a) : ($a, $b) );
     };
 
     while (@list) {
         my $next = shift @list;
 
-        if ($trait eq 'chain') {
+        if ( $ops{$op}{chain} ) {
             $bool = $bool && $apply->($result, $next);
             $result = $next;
             push @triangle, $bool if $args{triangle};
@@ -165,7 +159,7 @@ sub reduce {
     }
 
     return @triangle if $args{triangle};
-    return $bool     if $trait eq 'chain';
+    return $bool     if $ops{$op}{chain};
     return $result;
 }
 
@@ -263,10 +257,10 @@ sub applyop {
     ($op, $type) = _get_op_info($op);
 
     return unless $op;
-    return $ops{$op}->( @_[1, 2] )
+    return $ops{$op}{sub}->( @_[1, 2] )
         if $type eq 'infix'
         || $type eq 'postcircumfix';
-    return $ops{$op}->( $_[1] );
+    return $ops{$op}{sub}->( $_[1] );
 }
 
 sub reverseop {
@@ -285,12 +279,8 @@ sub _get_op_info {
         $op   = "infix:$op";
     }
 
-    my $trait = $chainops{$op} ? 'chain' :
-                $rightops{$op} ? 'right' :
-                                 ''      ;
-
     return unless exists $ops{$op};
-    return $op, $type, $trait;
+    return $op, $type;
 }
 
 1;
