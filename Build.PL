@@ -3,12 +3,9 @@ use Module::Build;
 
 my $build = Module::Build->new(
     module_name    => 'Operator::Util',
-    license        => 'Perl_5',
+    license        => 'perl',
     create_license => 1,
     create_readme  => 1,
-    configure_requires => {
-        'Module::Build' => 0.36_14,
-    },
     build_requires => {
         'ok'         => 0,
         'Test::More' => 0.40,
@@ -19,11 +16,8 @@ my $build = Module::Build->new(
     },
     meta_merge => {
         resources => {
-            repository => {
-                type => 'git',
-                url  => 'git://github.com/patch/operator-util-pm5.git',
-                web  => 'http://github.com/patch/operator-util-pm5',
-            },
+            repository => 'git://github.com/patch/operator-util-pm5.git',
+            homepage   => 'http://github.com/patch/operator-util-pm5',
             bugtracker => 'http://github.com/patch/operator-util-pm5/issues',
         },
     },
