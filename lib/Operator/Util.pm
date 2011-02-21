@@ -17,20 +17,27 @@ our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 *reducewith = \&reduce;
 *hyperwith  = \&hyper;
 
+# sub: operator subroutines
+# res: responses in an arrayref for when zero or one argument is provided --
+#      the first element is the response for zero args and the second is for
+#      one arg, defaulting to the arg itself
+# chain: set non-chaining Perl 5 operator to chaining-associative
+# right: set operator to right-associative
+
 my %ops = (
     # binary infix
     'infix:**'  => { sub => sub { $_[0] **  $_[1] }, res => [1], right => 1 },
     'infix:=~'  => { sub => sub { $_[0] =~  $_[1] }, res => [1, 1] },
     'infix:!~'  => { sub => sub { $_[0] !~  $_[1] }, res => [1, 1] },
     'infix:*'   => { sub => sub { $_[0] *   $_[1] }, res => [1] },
-    'infix:/'   => { sub => sub { $_[0] /   $_[1] }, res => [X] },
-    'infix:%'   => { sub => sub { $_[0] %   $_[1] }, res => [X] },
-    'infix:x'   => { sub => sub { $_[0] x   $_[1] }, res => [X] },
+    'infix:/'   => { sub => sub { $_[0] /   $_[1] }, res => [undef] },
+    'infix:%'   => { sub => sub { $_[0] %   $_[1] }, res => [undef] },
+    'infix:x'   => { sub => sub { $_[0] x   $_[1] }, res => [undef] },
     'infix:+'   => { sub => sub { $_[0] +   $_[1] }, res => [0] },
     'infix:-'   => { sub => sub { $_[0] -   $_[1] }, res => [0] },
     'infix:.'   => { sub => sub { $_[0] .   $_[1] }, res => [''] },
-    'infix:<<'  => { sub => sub { $_[0] <<  $_[1] }, res => [X] },
-    'infix:>>'  => { sub => sub { $_[0] >>  $_[1] }, res => [X] },
+    'infix:<<'  => { sub => sub { $_[0] <<  $_[1] }, res => [undef] },
+    'infix:>>'  => { sub => sub { $_[0] >>  $_[1] }, res => [undef] },
     'infix:<'   => { sub => sub { $_[0] <   $_[1] }, res => [1, 1], chain => 1 },
     'infix:>'   => { sub => sub { $_[0] >   $_[1] }, res => [1, 1], chain => 1 },
     'infix:<='  => { sub => sub { $_[0] <=  $_[1] }, res => [1, 1], chain => 1 },
@@ -52,29 +59,29 @@ my %ops = (
     'infix:||'  => { sub => sub { $_[0] ||  $_[1] }, res => [0] },
     'infix:..'  => { sub => sub { $_[0] ..  $_[1] }, res => [1] },
     'infix:...' => { sub => sub { $_[0] ... $_[1] }, res => [1] },
-    'infix:='   => { sub => sub { $_[0] =   $_[1] }, res => [undef, *] },
-    'infix:**=' => { sub => sub { $_[0] **= $_[1] }, res => [undef, *] },
-    'infix:*='  => { sub => sub { $_[0] *=  $_[1] }, res => [undef, *] },
-    'infix:/='  => { sub => sub { $_[0] /=  $_[1] }, res => [undef, *] },
-    'infix:%='  => { sub => sub { $_[0] %=  $_[1] }, res => [undef, *] },
-    'infix:x='  => { sub => sub { $_[0] x=  $_[1] }, res => [undef, *] },
-    'infix:+='  => { sub => sub { $_[0] +=  $_[1] }, res => [undef, *] },
-    'infix:-='  => { sub => sub { $_[0] -=  $_[1] }, res => [undef, *] },
-    'infix:.='  => { sub => sub { $_[0] .=  $_[1] }, res => [undef, *] },
-    'infix:<<=' => { sub => sub { $_[0] <<= $_[1] }, res => [undef, *] },
-    'infix:>>=' => { sub => sub { $_[0] >>= $_[1] }, res => [undef, *] },
-    'infix:&='  => { sub => sub { $_[0] &=  $_[1] }, res => [undef, *] },
-    'infix:|='  => { sub => sub { $_[0] |=  $_[1] }, res => [undef, *] },
-    'infix:^='  => { sub => sub { $_[0] ^=  $_[1] }, res => [undef, *] },
-    'infix:&&=' => { sub => sub { $_[0] &&= $_[1] }, res => [undef, *] },
-    'infix:||=' => { sub => sub { $_[0] ||= $_[1] }, res => [undef, *] },
+    'infix:='   => { sub => sub { $_[0] =   $_[1] }, res => [undef] },
+    'infix:**=' => { sub => sub { $_[0] **= $_[1] }, res => [undef] },
+    'infix:*='  => { sub => sub { $_[0] *=  $_[1] }, res => [undef] },
+    'infix:/='  => { sub => sub { $_[0] /=  $_[1] }, res => [undef] },
+    'infix:%='  => { sub => sub { $_[0] %=  $_[1] }, res => [undef] },
+    'infix:x='  => { sub => sub { $_[0] x=  $_[1] }, res => [undef] },
+    'infix:+='  => { sub => sub { $_[0] +=  $_[1] }, res => [undef] },
+    'infix:-='  => { sub => sub { $_[0] -=  $_[1] }, res => [undef] },
+    'infix:.='  => { sub => sub { $_[0] .=  $_[1] }, res => [undef] },
+    'infix:<<=' => { sub => sub { $_[0] <<= $_[1] }, res => [undef] },
+    'infix:>>=' => { sub => sub { $_[0] >>= $_[1] }, res => [undef] },
+    'infix:&='  => { sub => sub { $_[0] &=  $_[1] }, res => [undef] },
+    'infix:|='  => { sub => sub { $_[0] |=  $_[1] }, res => [undef] },
+    'infix:^='  => { sub => sub { $_[0] ^=  $_[1] }, res => [undef] },
+    'infix:&&=' => { sub => sub { $_[0] &&= $_[1] }, res => [undef] },
+    'infix:||=' => { sub => sub { $_[0] ||= $_[1] }, res => [undef] },
     'infix:,'   => { sub => sub { $_[0] ,   $_[1] }, res => [[]] },
     'infix:=>'  => { sub => sub { $_[0] =>  $_[1] }, res => [[]] },
     'infix:and' => { sub => sub { $_[0] and $_[1] }, res => [1] },
     'infix:or'  => { sub => sub { $_[0] or  $_[1] }, res => [0] },
     'infix:xor' => { sub => sub { $_[0] xor $_[1] }, res => [0] },
-    'infix:->'  => { sub => sub { my $m = $_[1];         $_[0]->$m }, res => [X, *] },
-    'infix:->=' => { sub => sub { my $m = $_[1]; $_[0] = $_[0]->$m }, res => [undef, *] },
+    'infix:->'  => { sub => sub { my $m = $_[1];         $_[0]->$m }, res => [undef] },
+    'infix:->=' => { sub => sub { my $m = $_[1]; $_[0] = $_[0]->$m }, res => [undef] },
 
     # unary prefix
     'prefix:++' => { sub => sub { ++$_[0]  } },
@@ -105,31 +112,37 @@ my %ops = (
     'circumfix:*{}' => { sub => sub { *{$_[0]} } },
 
     # postcircumfix
-    'postcircumfix:[]'   => { sub => sub { $_[0]->[$_[1]] }, res => [X] },
-    'postcircumfix:{}'   => { sub => sub { $_[0]->{$_[1]} }, res => [X] },
-    'postcircumfix:->[]' => { sub => sub { $_[0]->[$_[1]] }, res => [X] },
-    'postcircumfix:->{}' => { sub => sub { $_[0]->{$_[1]} }, res => [X] },
+    'postcircumfix:[]'   => { sub => sub { $_[0]->[$_[1]] }, res => [undef] },
+    'postcircumfix:{}'   => { sub => sub { $_[0]->{$_[1]} }, res => [undef] },
+    'postcircumfix:->[]' => { sub => sub { $_[0]->[$_[1]] }, res => [undef] },
+    'postcircumfix:->{}' => { sub => sub { $_[0]->{$_[1]} }, res => [undef] },
 );
 
 # Perl 5.10 operators
 if ($] >= 5.010) {
     $ops{'infix:~~'} = { sub => eval 'sub { $_[0] ~~ $_[1] }', res => [1, 1], chain => 1 };
-    $ops{'infix://'} = { sub => eval 'sub { $_[0] // $_[1] }', res => [0, *] };
+    $ops{'infix://'} = { sub => eval 'sub { $_[0] // $_[1] }', res => [0] };
 }
 
 sub reduce {
     my ($op, $list, %args) = @_;
-    my ($type, $trait);
-
-    my @list = ref $list eq 'ARRAY' ? @$list : $list;
-
-    return unless @list;
-    return $list[0] if @list == 1;
-
+    my $type;
     ($op, $type) = _get_op_info($op);
 
     return unless $op;
     return if $type ne 'infix';
+
+    my @list = ref $list eq 'ARRAY' ? @$list :
+               defined $list        ? $list  :
+                                      ()     ;
+
+    # return default for zero args
+    return $ops{$op}{res}[0]
+        unless @list;
+
+    # return default for one arg if defined, otherwise return the arg itself
+    return exists $ops{$op}{res}[1] ? $ops{$op}{res}[1] : $list[0]
+        if @list == 1;
 
     if ( $ops{$op}{right} ) {
         @list = reverse @list;

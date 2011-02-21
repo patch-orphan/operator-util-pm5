@@ -20,7 +20,7 @@ use ok 'Operator::Util', qw( reduce );
 is reduce('.', [qw<a b c d>]), 'abcd', 'reduce(.) works';
 is_deeply [reduce '.', [qw<a b c d>], triangle=>1], [qw<a ab abc abcd>], 'triangle reduce(.) works';
 
-SKIP: {
+TODO: {
     local $TODO = 'chaining reduce() NYI';
     ok  reduce('<',  ['1,2,3,4']), 'reduce(<) works (1)';
     ok !reduce('<',  ['1,3,2,4']), 'reduce(<) works (2)';
@@ -90,11 +90,8 @@ TODO: {
     is scalar reduce(',', [5,-3,7,0,1,-9]), 6, 'reduce(,) returns a list';
 }
 
-TODO: {
-    local $TODO = 'reduce() with no list NYI';
-    is reduce('*'), 1, 'reduce(*) with no operands returns 1';
-    is reduce('+'), 0, 'reduce(+) with no operands returns 0';
-}
+is reduce('*'), 1, 'reduce(*) with no operands returns 1';
+is reduce('+'), 0, 'reduce(+) with no operands returns 0';
 
 is reduce('*', 41),                   41,          'reduce(*, 41) returns 41';
 is reduce('*', 42),                   42,          'reduce(*, 42) returns 42';
