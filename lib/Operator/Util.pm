@@ -766,8 +766,6 @@ C<hyper>
 
 =item * Support the C<flat =E<gt> 0> option
 
-=item * Support chaining C<reduce>
-
 =item * Add special cases for zero- and one-element arrays with C<reduce>
 
 =item * Add C<warn>ings on errors instead of simply C<return>ing
