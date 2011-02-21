@@ -173,8 +173,7 @@ TODO: {
 }
 
 # test hypers on hashes
-TODO: {
-    local $TODO = 'hyper hash NYI';
+{
     my %a = (a => 1, b => 2, c => 3);
     my %b = (a => 5, b => 6, c => 7);
     my %c = (a => 1, b => 2);
@@ -267,8 +266,7 @@ TODO: {
     is $a{c},          3, 'hash - correct result from >>++';
 }
 
-TODO: {
-    local $TODO = 'hyper hash NYI';
+{
     my %a = (a => 1, b => 2, c => 3);
 
     my %r = hyper '*', \%a, 4, dwim_right=>1;

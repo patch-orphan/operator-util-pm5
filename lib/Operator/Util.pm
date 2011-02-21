@@ -3,6 +3,7 @@ use 5.006;
 use strict;
 use warnings;
 use parent 'Exporter';
+use List::MoreUtils qw( uniq );
 
 our $VERSION     = '0.02_1';
 our @EXPORT_OK   = qw(
@@ -226,17 +227,52 @@ sub hyper {
 
     my $dwim_left  = $args{dwim_left}  || $args{dwim};
     my $dwim_right = $args{dwim_right} || $args{dwim};
-    my ($length, @results);
 
+    if (ref $lhs eq 'HASH' && ref $rhs eq 'HASH') {
+        my @keys = do {
+            if ($dwim_left && $dwim_right) { # intersection
+                grep { exists $rhs->{$_} } keys %$lhs;
+            }
+            elsif ($dwim_left) {
+                keys %$rhs;
+            }
+            elsif ($dwim_right) {
+                keys %$lhs;
+            }
+            else { # union
+                uniq keys %$lhs, keys %$rhs;
+            }
+        };
+
+        return map { $_ => applyop( $op, $lhs->{$_}, $rhs->{$_} ) } @keys;
+    }
+    elsif (ref $lhs eq 'HASH') {
+        die "Sorry, structures on both sides of non-dwimmy hyper() are not of same shape:\n"
+            . "    left:  HASH\n"
+            . "    right: " . ref($rhs) . "\n"
+            unless $dwim_right;
+
+        return map { $_ => applyop( $op, $lhs->{$_}, $rhs ) } keys %$lhs;
+    }
+    elsif (ref $rhs eq 'HASH') {
+        die "Sorry, structures on both sides of non-dwimmy hyper() are not of same shape:\n"
+            . "    left: " . ref($rhs) . "\n"
+            . "    right:  HASH\n"
+            unless $dwim_left;
+
+        return map { $_ => applyop( $op, $lhs, $rhs->{$_} ) } keys %$rhs;
+    }
+
+    my $length;
     $lhs = [$lhs] if ref $lhs ne 'ARRAY';
     $rhs = [$rhs] if ref $rhs ne 'ARRAY';
 
     if (!$dwim_left && !$dwim_right) {
-        if (@$lhs != @$rhs) {
-            die "Sorry, arrayrefs passed to non-dwimmy hyper() are not of same length:\n"
-                . "    left:  " . @$lhs . " elements\n"
-                . "    right: " . @$rhs . " elements\n";
-        }
+        die "Sorry, arrayrefs passed to non-dwimmy hyper() are not of same length:\n"
+            . "    left:  " . @$lhs . " elements\n"
+            . "    right: " . @$rhs . " elements\n"
+            if @$lhs != @$rhs;
+
         $length = @$lhs;
     }
     elsif (!$dwim_left) {
@@ -249,6 +285,7 @@ sub hyper {
         $length = @$lhs > @$rhs ? @$lhs : @$rhs;
     }
 
+    my @results;
     my $lhs_index = 0;
     my $rhs_index = 0;
     for (1 .. $length) {
@@ -762,11 +799,7 @@ C<hyper>
 
 =item * Support multi-dimensional distribution with C<hyper>
 
-=item * Support hashes with C<hyper>
-
 =item * Support the C<flat =E<gt> 0> option
-
-=item * Add special cases for zero- and one-element arrays with C<reduce>
 
 =item * Add C<warn>ings on errors instead of simply C<return>ing
 
