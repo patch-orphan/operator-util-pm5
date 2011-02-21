@@ -236,6 +236,7 @@ sub hyper {
     my $dwim_right = $args{dwim_right} || $args{dwim};
 
     if (ref $lhs eq 'HASH' && ref $rhs eq 'HASH') {
+        my %results;
         my @keys = do {
             if ($dwim_left && $dwim_right) { # intersection
                 grep { exists $rhs->{$_} } keys %$lhs;
@@ -251,7 +252,20 @@ sub hyper {
             }
         };
 
-        return map { $_ => applyop( $op, $lhs->{$_}, $rhs->{$_} ) } @keys;
+        for my $key (@keys) {
+            $results{$key} = do {
+                if ( exists $lhs->{$key} && exists $rhs->{$key} ) {
+                    applyop( $op, $lhs->{$key}, $rhs->{$key} );
+                }
+                else {
+                    exists $ops{$op}{res}[1] ? $ops{$op}{res}[1] :
+                    exists $lhs->{$key}      ? $lhs->{$key}      :
+                                               $rhs->{$key}      ;
+                }
+            };
+        }
+
+        return %results;
     }
     elsif (ref $lhs eq 'HASH') {
         die "Sorry, structures on both sides of non-dwimmy hyper() are not of same shape:\n"
