@@ -216,12 +216,19 @@ sub hyper {
     my ($op, $lhs, $rhs, %args) = @_;
 
     if (@_ == 2) {
-        return map { applyop($op, $_) } @$lhs
-            if ref $lhs eq 'ARRAY';
-        return map { $_ => applyop($op, $lhs->{$_}) } keys %$lhs
-            if ref $lhs eq 'HASH';
-        return applyop($op, $$lhs)
-            if ref $lhs eq 'SCALAR';
+        return map {
+            ref eq 'ARRAY' ? [ hyper($op, $_) ] :
+            ref eq 'HASH'  ? { hyper($op, $_) } :
+                             applyop($op, $_)
+        } @$lhs if ref $lhs eq 'ARRAY';
+
+        return map {
+            $_ => ref eq 'ARRAY' ? [ hyper($op, $_) ] :
+                  ref eq 'HASH'  ? { hyper($op, $_) } :
+                                   applyop($op, $lhs->{$_})
+        } keys %$lhs if ref $lhs eq 'HASH';
+
+        return applyop($op, $$lhs) if ref $lhs eq 'SCALAR';
         return applyop($op, $lhs);
     }
 
@@ -797,7 +804,7 @@ lists" being returned from the function.
 =item * Allow more than two arrayrefs with C<zipwith>, C<crosswith>, and
 C<hyper>
 
-=item * Support multi-dimensional distribution with C<hyper>
+=item * Support multi-dimensional binary operator distribution with C<hyper>
 
 =item * Support the C<flat =E<gt> 0> option
 
