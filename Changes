@@ -1,13 +1,13 @@
 ---
-version: 0.02_1
-date:    XXX
+version: 0.03
+date:    Mon Feb 21 22:03:57 EST 2011
 changes:
 - reduce now supports chaining comparison ops
 - reduce now DWIMs when passed zero- or single-element lists
 - zip and cross now prohibit an opstring argument and always use 'infix:,'
 - zipwith and crosswith now require an opstring argument
 - hyper now supports hashes
-- hyper now supports unary op distribution in multidimensional structures
+- hyper now supports unary op distribution in multi-dimensional structures
 ---
 version: 0.02
 date:    Tue Feb 15 04:13:48 EST 2011

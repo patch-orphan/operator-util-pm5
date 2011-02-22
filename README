@@ -3,7 +3,7 @@ NAME
     operators
 
 VERSION
-    This document describes Operator::Util version 0.02.
+    This document describes Operator::Util version 0.03.
 
 SYNOPSIS
         use Operator::Util qw(
@@ -27,11 +27,11 @@ DESCRIPTION
 
     The terms "operator string" or "opstring" are used to describe a string
     that represents an operator, such as the string '+' for the addition
-    operator or the string '.' for the concatenation operator. Except where
-    noted, opstrings default to binary infix operators and the short form
-    may be used, e.g., '*' instead of 'infix:*'. All other operator types
-    (prefix, postfix, circumfix, and postcircumfix) must have the type
-    prepended in the opstrings, e.g., "prefix:++" and "postcircumfix:{}".
+    operator or the string '.' for the concatenation operator. Opstrings
+    default to binary infix operators and the short form may be used, e.g.,
+    '*' instead of 'infix:*'. All other operator types (prefix, postfix,
+    circumfix, and postcircumfix) must have the type prepended in the
+    opstrings, e.g., "prefix:++" and "postcircumfix:{}".
 
     When a list is passed as an argument for any of the functions, it must
     be either an array reference or a scalar value that will be used as a
@@ -114,6 +114,7 @@ DESCRIPTION
             ~~    # 1    (also for 1 arg)
             &     # -1   (from ^0, the 2's complement in arbitrary precision)
             |     # 0
+            ^     # 0
             &&    # 1
             ||    # 0
             //    # 0
@@ -143,20 +144,18 @@ DESCRIPTION
             # [1,2,3,4,5]
 
   Zip
-    zip OPSTRING, LIST1, LIST2
+    zipwith OPSTRING, LIST1, LIST2
     zip LIST1, LIST2
-        "zipwith" is an alias for "zip".
-
-        The "zip" function may be passed any infix opstring. It applies the
-        operator across all groupings of its list elements.
+        The "zipwith" function may be passed any infix opstring. It applies
+        the operator across all groupings of its list elements.
 
         The string concatenating form is:
 
-            zip('.', ['a','b'], [1,2])  # ('a1', 'b2')
+            zipwith('.', ['a','b'], [1,2])  # ('a1', 'b2')
 
         The list concatenating form when used like this:
 
-            zip(',', ['a','b'], [1,2], ['x','y'])
+            zipwith(',', ['a','b'], [1,2], ['x','y'])
 
         produces
 
@@ -173,16 +172,16 @@ DESCRIPTION
 
         Any non-mutating infix operator may be used.
 
-            zip('*', [1,2], [3,4])  # (3, 8)
+            zipwith('*', [1,2], [3,4])  # (3, 8)
 
         All assignment operators are considered mutating.
 
-        If the underlying operator is non-associating, so is the cross
-        operator, except for basic comparison operators since a chaining
-        workaround is provided:
+        If the underlying operator is non-associating, so is "zipwith",
+        except for basic comparison operators since a chaining workaround is
+        provided:
 
-            zip('cmp', \@a, \@b, \@c)  # ILLEGAL
-            zip('eq', \@a, \@b, \@c)   # ok
+            zipwith('cmp', \@a, \@b, \@c)  # ILLEGAL
+            zipwith('eq', \@a, \@b, \@c)   # ok
 
         The underlying operator is always applied with its own
         associativity, just as the corresponding "reduce" operator would do.
@@ -200,20 +199,18 @@ DESCRIPTION
             (['a', 1, 'x'], ['b', 2, 'y'])
 
   Cross
-    cross OPSTRING, LIST1, LIST2
+    crosswith OPSTRING, LIST1, LIST2
     cross LIST1, LIST2
-        "crosswith" is an alias for "cross".
-
-        The "cross" function may be passed any infix opstring. It applies
-        the operator across all groupings of its list elements.
+        The "crosswith" function may be passed any infix opstring. It
+        applies the operator across all groupings of its list elements.
 
         The string concatenating form is:
 
-            cross('.', ['a','b'], [1,2])  # ('a1', 'a2', 'b1', 'b2')
+            crosswith('.', ['a','b'], [1,2])  # ('a1', 'a2', 'b1', 'b2')
 
         The list concatenating form when used like this:
 
-            cross(',', ['a','b'], [1,2], ['x','y'])
+            crosswith(',', ['a','b'], [1,2], ['x','y'])
 
         produces
 
@@ -233,16 +230,16 @@ DESCRIPTION
 
         Any non-mutating infix operator may be used.
 
-            cross('*', [1,2], [3,4])  # (3, 4, 6, 8)
+            crosswith('*', [1,2], [3,4])  # (3, 4, 6, 8)
 
         All assignment operators are considered mutating.
 
-        If the underlying operator is non-associating, so is the cross
-        operator, except for basic comparison operators since a chaining
-        workaround is provided:
+        If the underlying operator is non-associating, so is "crosswith",
+        except for basic comparison operators since a chaining workaround is
+        provided:
 
-            cross('cmp', \@a, \@b, \@c)  # ILLEGAL
-            cross('eq', \@a, \@b, \@c)   # ok
+            crosswith('cmp', \@a, \@b, \@c)  # ILLEGAL
+            crosswith('eq', \@a, \@b, \@c)   # ok
 
         The underlying operator is always applied with its own
         associativity, just as the corresponding "reduce" operator would do.
@@ -401,63 +398,55 @@ DESCRIPTION
 
              hyper('prefix:-' {a => 1, b => 2, c => 3})  # (a => -1, b => -2, c => -3)
 
+  Flat list vs. "list of lists"
+    The optional named-argument "flat" can be passed to any of the above
+    functions. It defaults to 1, which causes the function to return a flat
+    list. When set to 0, it causes the return value from each operator to be
+    stored in an array ref, resulting in a "list of lists" being returned
+    from the function.
+
+        zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
+        zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
+
   Other utils
     applyop OPSTRING, OPERAND1, OPERAND2
     applyop OPSTRING, OPERAND
-        If three arguments are provided to "applyop", apply the binary
-        operator OPSTRING to the operands OPERAND1 and OPERAND2. If two
-        arguments are provided, apply the unary operator OPSTRING to the
-        operand OPERAND. The unary form defaults to using prefix operators,
-        so 'prefix:' may be omitted, e.g., '++' instead of 'prefix:++';
+        Apply the operator OPSTRING to the operands OPERAND1 and OPERAND2.
+        If an unary opstring is provided, only the first operand will be
+        used.
 
-            applyop '.', 'foo', 'bar'  # foobar
-            applyop '++', 5            # 6
+            applyop('.', 'foo', 'bar')  # foobar
+            applyop('prefix:++', 5)     # 6
 
     reverseop OPSTRING, OPERAND1, OPERAND2
         "reverseop" provides the same functionality as "applyop" except that
         OPERAND1 and OPERAND2 are reversed.
 
-            reverseop '.', 'foo', 'bar'  # barfoo
+            reverseop('.', 'foo', 'bar')  # barfoo
 
         If an unary opstring is used, "reverseop" has the same functionality
         as "applyop".
 
-    The optional named-argument "flat" can be passed to "reduce", "zip",
-    "cross", and "hyper". It defaults to 1, which causes the function to
-    return a flat list. When set to 0, it causes the return value from each
-    operator to be stored in an array ref, resulting in a "list of lists"
-    being returned from the function.
-
-        zip [1..3], ['a'..'c']             # 1, 'a', 2, 'b', 3, 'c'
-        zip [1..3], ['a'..'c'], flat => 0  # [1, 'a'], [2, 'b'], [3, 'c']
-
 TODO
-    *   Allow more than two arrayrefs with "zip", "cross", and "hyper"
+    *   Allow more than two arrayrefs with "zipwith", "crosswith", and
+        "hyper"
 
-    *   Support default operator with "zip" and "cross"
-
-    *   Support multi-dimensional distribution with "hyper"
-
-    *   Support hashes with "hyper"
+    *   Support multi-dimensional binary operator distribution with "hyper"
 
     *   Support the "flat => 0" option
-
-    *   Support chaining "reduce"
-
-    *   Add special cases for zero- and one-element arrays with "reduce"
 
     *   Add "warn"ings on errors instead of simply "return"ing
 
     *   Add named unary operators such as "uc" and "lc"
 
-    *   Support meta-operator literals such as "Z" and "X"
+    *   Support meta-operator literals such as "Z" and "X" in "applyop"
+
+    *   Add "evalop" for "eval"ing strings including meta-operator literals
 
     *   Should the first argument optionally be a subroutine ref instead of
         an operator string?
 
     *   Should the "flat => 0" option be changed to "lol => 1"?
-
-    *   Convert tests to TestML
 
 SEE ALSO
     *   perlop
@@ -469,15 +458,13 @@ SEE ALSO
             pairwise { $a + $b }, @array1, @array2  # List::MoreUtils
             zip '+', \@array1, \@array2             # Operator::Util
 
-    *   "mesh" a.k.a. "zip" in List::MoreUtils is similar to "zip" when
-        using the default operator ',' except that the arguments are arrays
-        instead of array refs:
+    *   "mesh" a.k.a. "zip" in List::MoreUtils is similar to "zip" except
+        that the arguments are arrays instead of array refs:
 
             mesh @array1, @array2   # List::MoreUtils
             zip \@array1, \@array2  # Operator::Util
 
-    *   Set::CrossProduct is an object-oriented alternative to "cross" when
-        using the default operator ","
+    *   Set::CrossProduct is an object-oriented alternative to "cross"
 
     *   The "Meta operators" section of Synopsis 3: Perl 6 Operators
         (<http://perlcabal.org/syn/S03.html#Meta_operators>) is the

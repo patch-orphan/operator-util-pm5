@@ -1,12 +1,13 @@
 package Operator::Util;
+
 use 5.006;
 use strict;
 use warnings;
 use parent 'Exporter';
 use List::MoreUtils qw( uniq );
 
-our $VERSION     = '0.02_1';
-our @EXPORT_OK   = qw(
+our $VERSION   = '0.03';
+our @EXPORT_OK = qw(
     reduce  reducewith
     zip     zipwith
     cross   crosswith
@@ -364,7 +365,7 @@ Operator::Util - A selection of array and hash functions that extend operators
 
 =head1 VERSION
 
-This document describes Operator::Util version 0.02_1.
+This document describes Operator::Util version 0.03.
 
 =head1 SYNOPSIS
 
@@ -776,6 +777,17 @@ same set of keys as the original hash.
 
 =back
 
+=head2 Flat list vs. "list of lists"
+
+The optional named-argument C<flat> can be passed to any of the above
+functions.  It defaults to C<1>, which causes the function to return a flat
+list.  When set to C<0>, it causes the return value from each operator to be
+stored in an array ref, resulting in a "list of lists" being returned from the
+function.
+
+    zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
+    zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
+
 =head2 Other utils
 
 =over 4
@@ -802,15 +814,6 @@ C<applyop>.
 
 =back
 
-The optional named-argument C<flat> can be passed to any of the functions
-except for C<applyop> and C<reverseop>.  It defaults to C<1>, which causes the
-function to return a flat list.  When set to C<0>, it causes the return value
-from each operator to be stored in an array ref, resulting in a "list of
-lists" being returned from the function.
-
-    zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
-    zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
-
 =head1 TODO
 
 =over
@@ -834,8 +837,6 @@ C<hyper>
 operator string?
 
 =item * Should the C<flat =E<gt> 0> option be changed to C<lol =E<gt> 1>?
-
-=item * Convert tests to L<TestML>
 
 =back
 
