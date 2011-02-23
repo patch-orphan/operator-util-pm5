@@ -6,7 +6,7 @@ use warnings;
 use parent 'Exporter';
 use List::MoreUtils qw( uniq );
 
-our $VERSION   = '0.03';
+our $VERSION   = '0.03_1';
 our @EXPORT_OK = qw(
     reduce  reducewith
     zip     zipwith
@@ -365,7 +365,7 @@ Operator::Util - A selection of array and hash functions that extend operators
 
 =head1 VERSION
 
-This document describes Operator::Util version 0.03.
+This document describes Operator::Util version 0.03_1.
 
 =head1 SYNOPSIS
 
