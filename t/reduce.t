@@ -1,6 +1,5 @@
-use Test::More tests => 72;
-
-use ok 'Operator::Util', qw( reduce );
+use Test::More tests => 71;
+use Operator::Util qw( reduce );
 
 {
     my @array = (5, -3, 7, 0, 1, -9);

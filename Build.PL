@@ -7,7 +7,6 @@ my $build = Module::Build->new(
     create_license => 1,
     create_readme  => 1,
     build_requires => {
-        'ok'         => 0,
         'Test::More' => 0.40,
     },
     requires => {

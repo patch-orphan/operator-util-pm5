@@ -1,6 +1,5 @@
-use Test::More tests => 14;
-
-use ok 'Operator::Util', qw( cross crosswith );
+use Test::More tests => 13;
+use Operator::Util qw( cross crosswith );
 
 {
     my @result = cross ['a','b'], [1,2];

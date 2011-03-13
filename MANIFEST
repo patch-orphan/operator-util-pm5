@@ -6,6 +6,7 @@ LICENSE
 MANIFEST			This list of files
 META.yml
 README
+t/00-load.t
 t/cross.t
 t/hyper.t
 t/reduce.t

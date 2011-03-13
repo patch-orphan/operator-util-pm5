@@ -1,6 +1,5 @@
-use Test::More tests => 167;
-
-use ok 'Operator::Util', qw( hyper );
+use Test::More tests => 166;
+use Operator::Util qw( hyper );
 
 # binary infix
 my @r;

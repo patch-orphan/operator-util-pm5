@@ -1,6 +1,5 @@
-use Test::More tests => 9;
-
-use ok 'Operator::Util', qw( zip zipwith );
+use Test::More tests => 8;
+use Operator::Util qw( zip zipwith );
 
 # zip
 is_deeply [zip ['a','b'], [1,2]], ['a',1,'b',2], 'zip() produces expected result';
