@@ -1,11 +1,16 @@
 use 5.006;
+use strict;
+use warnings;
 use Module::Build;
 
-my $build = Module::Build->new(
+my $builder = Module::Build->new(
     module_name    => 'Operator::Util',
     license        => 'perl',
     create_license => 1,
     create_readme  => 1,
+    configure_requires => {
+        'Module::Build' => 0.36,
+    },
     build_requires => {
         'Test::More' => 0.40,
     },
@@ -23,4 +28,4 @@ my $build = Module::Build->new(
     },
 );
 
-$build->create_build_script;
+$builder->create_build_script;
