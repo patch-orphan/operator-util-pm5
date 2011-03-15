@@ -377,13 +377,10 @@ This document describes Operator::Util version 0.03_1.
         applyop reverseop
     );
 
-=head1 WARNING
+=head1 NOTICE
 
-This is a B<pre-alpha> release of Operator::Util.  Not all features described
-in this document are complete.  Please see the L</TODO> list for details.  The
-interface and functionality may change in the future based on user feedback.
-Please make suggestions by creating an issue at
-L<http://github.com/patch/operator-util-pm5/issues>.
+This is an early release of Operator::Util.  Not all features described in
+this document are complete.  Please see the L</TODO> list for details.
 
 =head1 DESCRIPTION
 

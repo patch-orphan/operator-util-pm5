@@ -3,7 +3,7 @@ NAME
     operators
 
 VERSION
-    This document describes Operator::Util version 0.03.
+    This document describes Operator::Util version 0.03_1.
 
 SYNOPSIS
         use Operator::Util qw(
@@ -14,12 +14,9 @@ SYNOPSIS
             applyop reverseop
         );
 
-WARNING
-    This is a pre-alpha release of Operator::Util. Not all features
-    described in this document are complete. Please see the "TODO" list for
-    details. The interface and functionality may change in the future based
-    on user feedback. Please make suggestions by creating an issue at
-    <http://github.com/patch/operator-util-pm5/issues>.
+NOTICE
+    This is an early release of Operator::Util. Not all features described
+    in this document are complete. Please see the "TODO" list for details.
 
 DESCRIPTION
     A pragmatic approach at providing the functionality of many of Perl 6's
