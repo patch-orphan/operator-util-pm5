@@ -15,12 +15,12 @@ use Operator::Util qw( reduce );
     is reduce('**',  [2,2,3] ), 2**2**3, 'reduce(**) works';
     is reduce('%',   [13,7,4]), 13%7%4,  'reduce(%) works';
 
-    is_deeply [reduce '+', \@array, triangle=>2], [5,2,9,9,10,1], 'triangle reduce(+) works';
-    is_deeply [reduce '-', [1,2,3], triangle=>1], [1,-1,-4],      'triangle reduce(-) works';
+    is_deeply [reduce '+', \@array, {triangle=>1}], [5,2,9,9,10,1], 'triangle reduce(+) works';
+    is_deeply [reduce '-', [1,2,3], {triangle=>1}], [1,-1,-4],      'triangle reduce(-) works';
 }
 
 is reduce('.', [qw<a b c d>]), 'abcd', 'reduce(.) works';
-is_deeply [reduce '.', [qw<a b c d>], triangle=>1], [qw<a ab abc abcd>], 'triangle reduce(.) works';
+is_deeply [reduce '.', [qw<a b c d>], {triangle=>1}], [qw<a ab abc abcd>], 'triangle reduce(.) works';
 
 ok  reduce('<',  [1,2,3,4]), 'reduce(<) works (1)';
 ok !reduce('<',  [1,3,2,4]), 'reduce(<) works (2)';
@@ -48,18 +48,18 @@ ok !reduce('lt', [qw<a a c e>]), 'reduce(lt) basic sanity (negative)';
     ok  reduce('!=', [$a,$b,$a]), 'reduce(!=) basic sanity (positive)';
     ok !reduce('!=', [$a,$b,$b]), 'reduce(!=) basic sanity (negative)';
 
-    is_deeply [reduce '<', [1,2,3,4], triangle=>1], [1,1,1,1],   'triangle reduce(<) works (1)';
-    is_deeply [reduce '<', [1,3,2,4], triangle=>1], [1,1,'',''], 'triangle reduce(<) works (2)';
-    is_deeply [reduce '>', [4,3,2,1], triangle=>1], [1,1,1,1],   'triangle reduce(>) works (1)';
-    is_deeply [reduce '>', [4,2,3,1], triangle=>1], [1,1,'',''], 'triangle reduce(>) works (2)';
-    is_deeply [reduce '==', [4,4,4],  triangle=>1], [1,1,1],     'triangle reduce(==) works (1)';
-    is_deeply [reduce '==', [4,5,4],  triangle=>1], [1,'',''],   'triangle reduce(==) works (2)';
-    is_deeply [reduce '!=', [4,5,6],  triangle=>1], [1,1,1],     'triangle reduce(!=) works (1)';
-    is_deeply [reduce '!=', [4,5,5],  triangle=>1], [1,1,''],    'triangle reduce(!=) works (2)';
+    is_deeply [reduce '<', [1,2,3,4], {triangle=>1}], [1,1,1,1],   'triangle reduce(<) works (1)';
+    is_deeply [reduce '<', [1,3,2,4], {triangle=>1}], [1,1,'',''], 'triangle reduce(<) works (2)';
+    is_deeply [reduce '>', [4,3,2,1], {triangle=>1}], [1,1,1,1],   'triangle reduce(>) works (1)';
+    is_deeply [reduce '>', [4,2,3,1], {triangle=>1}], [1,1,'',''], 'triangle reduce(>) works (2)';
+    is_deeply [reduce '==', [4,4,4],  {triangle=>1}], [1,1,1],     'triangle reduce(==) works (1)';
+    is_deeply [reduce '==', [4,5,4],  {triangle=>1}], [1,'',''],   'triangle reduce(==) works (2)';
+    is_deeply [reduce '!=', [4,5,6],  {triangle=>1}], [1,1,1],     'triangle reduce(!=) works (1)';
+    is_deeply [reduce '!=', [4,5,5],  {triangle=>1}], [1,1,''],    'triangle reduce(!=) works (2)';
 }
 
-is_deeply [reduce '**', [1,2,3],  triangle=>1], [3,8,1],   'triangle reduce(**) (right assoc) works (1)';
-is_deeply [reduce '**', [3,2,0],  triangle=>1], [0,1,3],   'triangle reduce(**) (right assoc) works (2)';
+is_deeply [reduce '**', [1,2,3],  {triangle=>1}], [3,8,1],   'triangle reduce(**) (right assoc) works (1)';
+is_deeply [reduce '**', [3,2,0],  {triangle=>1}], [0,1,3],   'triangle reduce(**) (right assoc) works (2)';
 
 {
     my @array = (undef, undef, 3, undef, 5);
@@ -74,7 +74,7 @@ is_deeply [reduce '**', [3,2,0],  triangle=>1], [0,1,3],   'triangle reduce(**) 
 
     # undef as well as [//] should work too, but testing it like
     # this would presumably emit warnings when we have them.
-    is_deeply [reduce '||', [0,0,3,4,5], triangle=>1], [0,0,3,3,3], 'triangle reduce(||) works';
+    is_deeply [reduce '||', [0,0,3,4,5], {triangle=>1}], [0,0,3,3,3], 'triangle reduce(||) works';
 }
 
 {
@@ -94,15 +94,14 @@ TODO: {
 is reduce('*'), 1, 'reduce(*) with no operands returns 1';
 is reduce('+'), 0, 'reduce(+) with no operands returns 0';
 
-is reduce('*', 41),                   41,          'reduce(*, 41) returns 41';
-is reduce('*', 42),                   42,          'reduce(*, 42) returns 42';
-is reduce('*', 42, triangle=>1),      42,          'triangle reduce(*, 42) returns 42';
-is reduce('.', 'towel'),              'towel',     'reduce(., "towel") returns "towel"';
-is reduce('.', 'washcloth'),          'washcloth', 'reduce(., "washcloth") returns "washcloth"';
-is reduce('.', 'towel', triangle=>1), 'towel',     'triangle reduce(., "towel") returns "towel"';
-
-is reduce('<', 42),                   1,           'reduce(<, 42) returns true';
-is reduce('<', 42, triangle=>1),      1,           'triangle reduce(<, 42) returns true';
+is reduce('*', 41),                     41,          'reduce(*, 41) returns 41';
+is reduce('*', 42),                     42,          'reduce(*, 42) returns 42';
+is reduce('*', 42, {triangle=>1}),      42,          'triangle reduce(*, 42) returns 42';
+is reduce('.', 'towel'),                'towel',     'reduce(., "towel") returns "towel"';
+is reduce('.', 'washcloth'),            'washcloth', 'reduce(., "washcloth") returns "washcloth"';
+is reduce('.', 'towel', {triangle=>1}), 'towel',     'triangle reduce(., "towel") returns "towel"';
+is reduce('<', 42),                     1,           'reduce(<, 42) returns true';
+is reduce('<', 42, {triangle=>1}),      1,           'triangle reduce(<, 42) returns true';
 
 TODO: {
     local $TODO = 'reduce(xor) NYI';
