@@ -1,10 +1,11 @@
 ---
 version: 0.04
-date:    XXX
+date:    2011-03-15
 changes:
+- Changed named params to accept a hashref instead of a list
 ---
 version: 0.03
-date:    Mon Feb 21 22:03:57 EST 2011
+date:    2011-02-21
 changes:
 - reduce now supports chaining comparison ops
 - reduce now DWIMs when passed zero- or single-element lists
@@ -14,13 +15,13 @@ changes:
 - hyper now supports unary op distribution in multi-dimensional structures
 ---
 version: 0.02
-date:    Tue Feb 15 04:13:48 EST 2011
+date:    2011-02-15
 changes:
 - Added lots of documentation
 - Added author tests
 - No functional changes
 ---
 version: 0.01
-date:    Mon Feb 14 08:42:22 EST 2011
+date:    2011-02-14
 changes:
 - First release

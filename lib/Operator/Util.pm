@@ -377,12 +377,11 @@ This document describes Operator::Util version 0.03_1.
         applyop reverseop
     );
 
-=head1 NOTICE
-
-This is an early release of Operator::Util.  Not all features described in
-this document are complete.  Please see the L</TODO> list for details.
-
 =head1 DESCRIPTION
+
+Warning: This is an early release of Operator::Util.  Not all features
+described in this document are complete.  Please see the L</TODO> list for
+details.
 
 A pragmatic approach at providing the functionality of many of Perl 6's
 meta-operators in Perl 5.
