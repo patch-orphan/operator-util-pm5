@@ -1,7 +1,7 @@
 #!perl
 use strict;
 use warnings;
-use Test::More tests => 71;
+use Test::More tests => 79;
 use Operator::Util qw( reduce );
 
 {
@@ -31,8 +31,8 @@ ok !reduce('==', [4,5,4]  ), 'reduce(==) works (2)';
 ok  reduce('!=', [4,5,6]  ), 'reduce(!=) works (1)';
 ok !reduce('!=', [4,4,4]  ), 'reduce(!=) works (2)';
 
-ok !reduce('eq', [qw<a a b a>]), 'reduce(eq) basic sanity (positive)';
-ok  reduce('eq', [qw<a a a a>]), 'reduce(eq) basic sanity (negative)';
+ok  reduce('eq', [qw<a a a a>]), 'reduce(eq) basic sanity (positive)';
+ok !reduce('eq', [qw<a a b a>]), 'reduce(eq) basic sanity (negative)';
 ok  reduce('ne', [qw<a b c a>]), 'reduce(ne) basic sanity (positive)';
 ok !reduce('ne', [qw<a a b c>]), 'reduce(ne) basic sanity (negative)';
 ok  reduce('lt', [qw<a b c e>]), 'reduce(lt) basic sanity (positive)';
@@ -68,7 +68,7 @@ is_deeply [reduce '**', [3,2,0],  {triangle=>1}], [0,1,3],   'triangle reduce(**
 }
 
 {
-    my @array = (undef, undef, 0, 3, undef, 5);
+    my @array = (undef, undef, undef, 3, undef, 5);
     is reduce('||', \@array), 3, 'reduce(||) works';
     is reduce('or', \@array), 3, 'reduce(or) works';
 
@@ -118,4 +118,20 @@ TODO: {
     is reduce('xor', [5, 0,  0]), (5 xor 0 xor  0), 'reduce(xor) mix 4';
     is reduce('xor', [0, 9,  0]), (0 xor 9 xor  0), 'reduce(xor) mix 5';
     is reduce('xor', [0, 0, 17]), (0 xor 0 xor 17), 'reduce(xor) mix 6';
+}
+
+# Perl 5.10 operators
+if ($] >= 5.010) {
+    # smart-match operator
+    ok  reduce('~~', [qw<a a a a>]), 'reduce(~~) basic sanity (positive)';
+    ok !reduce('~~', [qw<a a b a>]), 'reduce(~~) basic sanity (negative)';
+
+    # defined-or operator
+    is reduce('//', [undef, undef, 3, undef, 5]), 3, 'reduce(//) works';
+    is reduce('//', [0, 0, 3, 0, 5]),             0, 'reduce(//) works';
+
+    is reduce('~~'),       1, 'zero-argument reduce(~~)';
+    is reduce('~~', 'a'),  1, 'single-argument reduce(~~)';
+    is reduce('//'),       0, 'zero-argument reduce(//)';
+    is reduce('//', 10),  10, 'single-argument reduce(//)';
 }
