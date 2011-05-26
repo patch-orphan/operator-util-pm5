@@ -127,7 +127,7 @@ if ($] >= 5.010) {
 }
 
 sub reduce {
-    my ($op, $list, $arg_ref) = @_;
+    my ($op, $list, %args) = @_;
     my $type;
     ($op, $type) = _get_op_info($op);
 
@@ -165,15 +165,15 @@ sub reduce {
         if ( $ops{$op}{chain} ) {
             $bool = $bool && $apply->($result, $next);
             $result = $next;
-            push @triangle, $bool if $arg_ref->{triangle};
+            push @triangle, $bool if $args{triangle};
         }
         else {
             $result = $apply->($result, $next);
-            push @triangle, $result if $arg_ref->{triangle};
+            push @triangle, $result if $args{triangle};
         }
     }
 
-    return @triangle if $arg_ref->{triangle};
+    return @triangle if $args{triangle};
     return $bool     if $ops{$op}{chain};
     return $result;
 }
@@ -214,7 +214,7 @@ sub crosswith {
 }
 
 sub hyper {
-    my ($op, $lhs, $rhs, $arg_ref) = @_;
+    my ($op, $lhs, $rhs, %args) = @_;
 
     if (@_ == 2) {
         return map {
@@ -233,8 +233,8 @@ sub hyper {
         return applyop($op, $lhs);
     }
 
-    my $dwim_left  = $arg_ref->{dwim_left}  || $arg_ref->{dwim};
-    my $dwim_right = $arg_ref->{dwim_right} || $arg_ref->{dwim};
+    my $dwim_left  = $args{dwim_left}  || $args{dwim};
+    my $dwim_right = $args{dwim_right} || $args{dwim};
 
     if (ref $lhs eq 'HASH' && ref $rhs eq 'HASH') {
         my %results;
@@ -404,7 +404,7 @@ The following functions are provided but are not exported by default.
 
 =over 4
 
-=item reduce OPSTRING, LIST, { triangle => 1 }
+=item reduce OPSTRING, LIST [, triangle => 1 ]
 
 C<reducewith> is an alias for C<reduce>.  It may be desirable to use
 C<reducewith> to avoid naming conflicts or confusion with
@@ -494,12 +494,12 @@ by the semantics of the list, not the semantics of C<||>.
 To generate all intermediate results along with the final result, you can set
 the C<triangle> argument:
 
-    reduce('+', [1..5], {triangle => 1})  # (1, 3, 6, 10, 15)
+    reduce('+', [1..5], triangle=>1)  # (1, 3, 6, 10, 15)
 
 The visual picture of a triangle is not accidental.  To produce a triangular
 list of lists, you can use a "triangular comma":
 
-    reduce(',', [1..5], {triangle => 1})
+    reduce(',', [1..5], triangle=>1)
     # [1],
     # [1,2],
     # [1,2,3],
@@ -561,7 +561,7 @@ treating the first dimension as the only dimension.
 The response is a flat list by default.  To return a list of arrayrefs, unset
 the C<flat> argument:
 
-    zip(['a','b'], [1,2], ['x','y'], {flat => 0})
+    zip(['a','b'], [1,2], ['x','y'], flat=>0)
 
 produces:
 
@@ -625,7 +625,7 @@ treating the first dimension as the only dimension.
 The response is a flat list by default.  To return a list of arrayrefs, unset
 the C<flat> argument:
 
-    cross(['a','b'], [1,2], ['x','y'], {flat => 0 })
+    cross(['a','b'], [1,2], ['x','y'], flat=>0)
 
 produces:
 
@@ -644,7 +644,7 @@ produces:
 
 =over 4
 
-=item hyper OPSTRING, LIST1, LIST2, { dwim_left => 1, dwim_right => 1 }
+=item hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
 
 =item hyper OPSTRING, LIST
 
@@ -665,18 +665,18 @@ result depends on what C<dwim> arguments are passed.
 For an infix operator, if either argument is insufficiently dimensioned,
 C<hyper> "upgrades" it, but only if you tell it to "dwim" on that side.
 
-     hyper('-', [3,8,2,9,3,8], 1, {dwim_right => 1})  # (2,7,1,8,2,7)
-     hyper('+=', \@array, 42, {dwim_right => 1})      # add 42 to each element
+     hyper('-', [3,8,2,9,3,8], 1, dwim_right=>1)  # (2,7,1,8,2,7)
+     hyper('+=', \@array, 42, dwim_right=>1)      # add 42 to each element
 
 If you don't know whether one side or the other will be under-dimensioned, you
 can dwim on both sides:
 
-    hyper('*', $left, $right, {dwim => 1})
+    hyper('*', $left, $right, dwim=>1)
 
 The upgrade never happens on the non-dwim end of a C<hyper>.  If you write
 
-    hyper('*', $bigger, $smaller, {dwim_left => 1})
-    hyper('*', $smaller, $bigger, {dwim_right => 1})
+    hyper('*', $bigger, $smaller, dwim_left=>1)
+    hyper('*', $smaller, $bigger, dwim_right=>1)
 
 an exception is thrown, and if you write
 
@@ -700,13 +700,13 @@ corresponding pair of elements, in case there are more dimensions to handle.
 
 Here are some examples:
 
-    hyper '+', [1,2,3,4], [1,2]                  # always error
-    hyper '+', [1,2,3,4], [1,2], {dwim=>1      } # 2,4,4,6 - rhs dwims 1,2,1,2
-    hyper '+', [1,2,3],   [1,2], {dwim=>1      } # 2,4,4   - rhs dwims 1,2,1
-    hyper '+', [1,2,3,4], [1,2], {dwim_left=>1 } # 2,4     - lhs dwims 1,2
-    hyper '+', [1,2,3,4], [1,2], {dwim_right=>1} # 2,4,4,6 - rhs dwims 1,2,1,2
-    hyper '+', [1,2,3],   [1,2], {dwim_right=>1} # 2,4,4   - rhs dwims 1,2,1
-    hyper '+', [1,2,3],   1,     {dwim_right=>1} # 2,3,4   - rhs dwims 1,1,1
+    hyper('+', [1,2,3,4], [1,2]               ) # always error
+    hyper('+', [1,2,3,4], [1,2], dwim=>1      ) # (2,4,4,6) rhs dwims to 1,2,1,2
+    hyper('+', [1,2,3],   [1,2], dwim=>1      ) # (2,4,4)   rhs dwims to 1,2,1
+    hyper('+', [1,2,3,4], [1,2], dwim_left=>1 ) # (2,4)     lhs dwims to 1,2
+    hyper('+', [1,2,3,4], [1,2], dwim_right=>1) # (2,4,4,6) rhs dwims to 1,2,1,2
+    hyper('+', [1,2,3],   [1,2], dwim_right=>1) # (2,4,4)   rhs dwims to 1,2,1
+    hyper('+', [1,2,3],   1,     dwim_right=>1) # (2,3,4)   rhs dwims to 1,1,1
 
 Another way to look at it is that the dwimmy array's elements are indexed
 modulo its number of elements so as to produce as many or as few elements as
@@ -716,7 +716,7 @@ Note that each element of a dwimmy list may in turn be expanded into another
 dimension if necessary, so you can, for instance, add one to all the elements
 of a matrix regardless of its dimensionality:
 
-    hyper('+=', \@fancy, 1, {dwim_right => 1})
+    hyper('+=', \@fancy, 1, dwim_right=>1)
 
 On the non-dwimmy side, any scalar value will be treated as an array of one
 element, and for infix operators must be matched by an equivalent one-element
@@ -727,9 +727,9 @@ When using a unary operator no dwimmery is ever needed:
 
      @negatives = hyper('prefix:-', \@positives)
 
-     hyper('postfix:++', \@positions)                  # increment each
-     hyper('->', \@objects, 'run', {dwim_right => 1})  # call ->run() on each
-     hyper('length', ['f','oo','bar'])                 # (1, 2, 3)
+     hyper('postfix:++', \@positions)              # increment each
+     hyper('->', \@objects, 'run', dwim_right=>1)  # call ->run() on each
+     hyper('length', ['f','oo','bar'])             # (1, 2, 3)
 
 Note that method calls are infix operators with a string used for the method
 name.
@@ -740,13 +740,13 @@ Hyper operators are defined recursively on nested arrays, so:
 
 Likewise the dwimminess of dwimmy infixes propagates:
 
-    hyper('+', [[1, 2], 3], [4, [5, 6]], {dwim => 1})  # [[5, 6], [8, 9]]
+    hyper('+', [[1, 2], 3], [4, [5, 6]], dwim=>1)  # [[5, 6], [8, 9]]
 
 C<hyper> may be applied to hashes as well as to arrays.  In this case
 "dwimminess" says whether to ignore keys that do not exist in the other hash,
 while "non-dwimminess" says to use all keys that are in either hash.  That is,
 
-    hyper('+', \%foo, \%bar, {dwim => 1})
+    hyper('+', \%foo, \%bar, dwim=>1)
 
 gives you the intersection of the keys, while
 
@@ -755,7 +755,7 @@ gives you the intersection of the keys, while
 gives you the union of the keys.  Asymmetrical hypers are also useful; for
 instance, if you say:
 
-    hyper('+', \%outer, \%inner, {dwim_right => 1})
+    hyper('+', \%outer, \%inner, dwim_right=>1)
 
 only the %inner keys that already exist in %outer will occur in the result.
 Note, however, that you want
@@ -781,8 +781,8 @@ list.  When set to C<0>, it causes the return value from each operator to be
 stored in an array ref, resulting in a "list of lists" being returned from the
 function.
 
-    zip([1..3], ['a'..'c'])                # 1, 'a', 2, 'b', 3, 'c'
-    zip([1..3], ['a'..'c'], {flat => 0 })  # [1, 'a'], [2, 'b'], [3, 'c']
+    zip([1..3], ['a'..'c'])           # 1, 'a', 2, 'b', 3, 'c'
+    zip([1..3], ['a'..'c'], flat=>0)  # [1, 'a'], [2, 'b'], [3, 'c']
 
 =head2 Other utils
 
