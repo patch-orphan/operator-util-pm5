@@ -1,4 +1,10 @@
 ---
+version: 0.05
+date:    2011-06-08
+changes:
+- Fixed tests on earlier versions of Perl than 5.10
+- No functional changes
+---
 version: 0.04
 date:    2011-06-07
 changes:

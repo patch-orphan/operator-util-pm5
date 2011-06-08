@@ -3,7 +3,7 @@ NAME
     operators
 
 VERSION
-    This document describes Operator::Util version 0.04.
+    This document describes Operator::Util version 0.05.
 
 SYNOPSIS
         use Operator::Util qw(
