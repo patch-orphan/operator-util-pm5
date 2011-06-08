@@ -20,8 +20,8 @@ is_deeply [crosswith '**', [1,2,3], [2,4]], [1,1,4,16,9,81], 'crosswith(**) work
 }
 
 # and a list of arrays in
-TODO: {
-    local $TODO = 'flat=>0 NYI';
+SKIP: {
+    skip 'flat=>0 NYI', 1;
     my @result = map { join ':', @$_ } cross([1,2,3], ['A','B'], flat => 0);
     is \@result, [qw< 1:A 1:B 2:A 2:B 3:A 3:B >], 'non-flat cross() works';
 }
