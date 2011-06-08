@@ -1,8 +1,10 @@
 ---
 version: 0.04
-date:    2011-03-15
+date:    2011-06-07
 changes:
-- Changed named params to accept a hashref instead of a list
+- Added tests for Perl 5.10 operators
+- Updated documentation
+- No functional changes
 ---
 version: 0.03
 date:    2011-02-21

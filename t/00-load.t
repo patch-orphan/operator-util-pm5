@@ -13,4 +13,4 @@ BEGIN {
     );
 }
 
-diag("Testing Operator::Util $Operator::Util::VERSION, Perl $], $^X");
+diag "Testing Operator::Util $Operator::Util::VERSION, Perl $], $^X";
