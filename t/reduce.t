@@ -122,7 +122,9 @@ TODO: {
 }
 
 # Perl 5.10 operators
-if ($] >= 5.010) {
+SKIP: {
+    skip 'Perl 5.10 required', 8 if $] < 5.010;
+
     # smart-match operator
     ok  reduce('~~', [qw<a a a a>]), 'reduce(~~) basic sanity (positive)';
     ok !reduce('~~', [qw<a a b a>]), 'reduce(~~) basic sanity (negative)';
