@@ -402,7 +402,7 @@ The following functions are provided but are not exported by default.
 
 =head2 Reduction
 
-=over 4
+=over
 
 =item reduce OPSTRING, LIST [, triangle => 1 ]
 
@@ -510,7 +510,7 @@ list of lists, you can use a "triangular comma":
 
 =head2 Zip
 
-=over 4
+=over
 
 =item zipwith OPSTRING, LIST1, LIST2
 
@@ -571,7 +571,7 @@ produces:
 
 =head2 Cross
 
-=over 4
+=over
 
 =item crosswith OPSTRING, LIST1, LIST2
 
@@ -642,7 +642,7 @@ produces:
 
 =head2 Hyper
 
-=over 4
+=over
 
 =item hyper OPSTRING, LIST1, LIST2 [, dwim_left => 1, dwim_right => 1 ]
 
@@ -786,7 +786,7 @@ function.
 
 =head2 Other utils
 
-=over 4
+=over
 
 =item applyop OPSTRING, OPERAND1, OPERAND2
 
